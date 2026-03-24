@@ -1,0 +1,598 @@
+*{
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  
+}
+
+
+
+.Images_container{
+
+ position: relative; border: solid; border-width: .1rem ; top: 7rem; left: 50% ; transform: translateX(-50%); background-color: azure;
+ height: 80vh; width: 70vw ;  
+
+ display: grid;
+ grid-template-columns: repeat(3, 1fr);
+ grid-template-rows: repeat(4, 1fr);
+
+ overflow: hidden; gap: 1rem  ;
+ padding: 1rem;  overflow-y: auto;
+
+}
+
+#Image{
+  
+  height: 20rem; /* Make the container fill the grid cell */
+  width: 100%; /* Make the container fill the grid cell */ 
+  display: flex; /* Use flexbox to center the image */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  overflow: hidden; /* Hide overflow */
+
+}
+
+/*-------------------------old styling----------------------------*/
+
+.get_info{
+  position: relative;  display: flex; align-self: flex-start; top: 1rem; right: 4rem; color: bisque;
+  border: none; background-color: rgba(255, 255, 255, 0); height: 2rem; width: 2rem; border-radius: 100%; font-size: 28px; 
+  cursor: pointer;
+}
+
+.get_info a{
+  text-decoration: none;  /* Removes underline */
+  color: inherit;
+}
+.logo_container{
+  display: flex; flex-direction: row;
+}
+
+#Image img {
+  width: 100%; /* Make the image fill the container */
+  height: 100%; /* Make the image fill the container */
+  object-fit: cover; /* Ensure the image covers the container without distortion */
+  
+
+}
+/*-----------------------------------------------------*/
+
+
+
+
+.Search_mainCont{
+  position: relative;   height:5vh ; width: 30vw;  
+  top: 3vh; left:50%; transform: translateX(-50%);  z-index: 5;
+} 
+.Search{
+height:90% ; width: 100%; padding: 0;
+outline: none; font-size: 15px; padding-left: 5px;
+}
+.Search:focus{
+  outline: 2px solid rgb(26, 140, 247);
+}
+.Drop_down{
+  position: absolute; display: grid;  grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(4, 1fr); gap: .2rem ;  border: solid;  border-width: .1rem; top: 5vh; background-color: antiquewhite;
+  height: auto; max-height: 15vh; min-height: 0;  width: 100%; z-index: 10; overflow-y: auto;  padding: 1rem;
+}
+
+.Drop_down::-webkit-scrollbar-button {
+  display: none; /* Hides the up/down scrollbar arrows */
+}
+
+/* Optional: Customize the scrollbar appearance */
+.Drop_down::-webkit-scrollbar {
+  width: 5px; /* Scrollbar width */
+}
+
+.Drop_down::-webkit-scrollbar-thumb {
+  background-color: rgb(104, 102, 102); /* Scrollbar color */
+  border-radius: 0px;
+}
+
+/*-------Responsivness for the search / header---------*/
+
+
+.DropDown{
+   position: absolute; right: 3vw ; top: 7vh; border: solid; border-width: .1rem; padding: 20px; border-radius: 10px; z-index: 20;
+   height: 12vw; width: 20vh ; background-color: #FFEBD0; display: flex; flex-direction: column; gap: 3rem; align-items: center; justify-content: center;
+}
+
+.Profile{
+ border: solid; width: 9vw; height: 4vh; background-color: #278783; border-width: .1rem; color: #FFEBD0;
+display: flex; align-items:center ; justify-content: center; cursor: pointer; border-radius: 20px ;text-decoration: none;
+  outline: none; transition: background-color .2s ease-in;
+}
+
+.Log_Out{
+  border: solid; width: 9vw; height: 4vh; border-width: .1rem;  background-color: #278783; color: #FFEBD0; display: flex;
+  align-items:center ; justify-content: center; cursor: pointer; border-radius: 20px ; outline: none; transition: background-color .2s ease-in;
+} 
+
+
+
+.Profile:hover , .Log_Out:hover{
+  background-color: #4acfc9;
+}
+
+.Profile_Link{
+  text-decoration: none;  /* Removes underline */
+  color: inherit; /* Ensures it uses the parent text color */
+}
+
+@media (max-width: 412px) {
+  .Search_mainCont{
+  position: absolute; top: 11vh; margin: auto; left:50%;  height:5vh ; width: 50%;  
+    transform: translateX(-50%);  z-index: 5;
+}
+
+.First_Container{
+   position: absolute; z-index: -5 ; display: flex; flex-direction: row; top: 9rem; border: solid; left: 4vw; height: 45vh ; width: 92%; border-width: .1rem; border-color: #A1887F;
+   border-radius: 50px; background-color:#EAE6D3 ; overflow: hidden;
+}
+
+.Logo{
+ 
+ position: relative; width: 40vw; 
+
+}
+
+.Sign_Log{
+ display: flex; gap: 1rem; justify-content: flex-end; align-items: center;
+  padding: 0.5rem 1rem;  width: 100%; box-sizing: border-box;
+  
+}
+
+.Drop_down{
+
+ /*display: grid;   grid-template-rows: repeat(1, 1fr);*/
+
+  position: absolute;z-index: 100; display: flex; flex-direction: column; gap: .2rem ;  border: solid;  border-width: .1rem; top: 5vh; background-color: antiquewhite;
+  height: auto; max-height: 15vh; min-height: 0;  width: 100%;  overflow-y: auto;  padding: 1rem;
+
+}
+
+.ImagesContainer {
+  
+  position: absolute;
+  display: flex; flex-direction: column;
+  height: 50vh;
+  width: 20vw;
+  align-items: flex-end; /* aligns items to the right inside the 20vw box */
+  padding-top: 0.5vh;
+}
+
+/* Cat profile image */
+.Image1_container {
+
+  width: 50%;               /* half the width of ImagesContainer (10vw) */
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  right: 0;
+                   /* align to right, not using left offset */
+}
+
+/* Image itself */
+.Image1 {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 25% 100%; /* keep if you want a specific crop */
+}
+
+.Image2_container{
+   position: relative;
+  left: -3rem; aspect-ratio: 1 / 1; height: auto;              /* Let aspect-ratio control height */
+  border-radius: 50%; overflow: hidden; background: lightblue; 
+}
+.Image2{
+
+  object-fit: cover; height:100%; width: 100%;  
+
+}
+
+.Profile_preferences{
+   position: relative; left: 5rem;   display: flex; justify-content: flex-end; padding-right: 2rem;  padding-top: 1.5rem; 
+  font-size: 35px; 
+} 
+
+.Profile_preferences > svg:first-child {
+ position: relative; cursor: pointer; z-index: 5;
+ font-size: 2.5rem;
+  left: 1rem;
+  user-select: none; /* Standard syntax */
+  -webkit-user-select: none; /* Safari/Chrome */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+}
+
+ .DropDown {
+    right: 3.8rem;
+    top: 6vh;
+    width: 50vw; /* much better than 20vh */
+    height: auto;
+    padding: 15px;
+    gap: 1.5rem;
+  }
+
+.Profile{
+  text-decoration: none;
+    width: 35vw;
+    height: 4.5vh;
+    font-size: 1rem;
+ 
+  outline: none;
+}
+  
+  .Log_Out {
+    width: 80%;
+    height: 4.5vh;
+    font-size: 1rem;
+  }
+  
+
+}
+
+
+
+/*-----------------------------------------------------*/
+.cat_breeds a {
+  text-decoration: none;  /* Removes underline */  
+  color: inherit; /* Ensures it uses the parent text color */
+}
+
+.cat_breeds{
+  font-size: 20px;   height: fit-content; width:fit-content;  border: solid; border-width: .1rem; border-radius: 5px;   /* Removes underline */
+  color: inherit; padding: 5px; background-color: rgb(54, 173, 228); color: white;
+}
+
+.header{
+  position: absolute; border: solid; color: black; border-width: .1rem; height: 6rem; width: 100%; 
+  display: grid;  grid-template-columns: 1fr 2fr 1fr; grid-template-rows: (1 , 1fr); background-color:#4A9D9F;
+
+}
+
+.Logo{
+  display: flex; align-items: center; align-self: center; justify-content: center; 
+ font-size: clamp(1.5rem, 2.5vw, 3rem);;
+ font-family: "Poppins", sans-serif;
+ font-weight: 400;
+ font-style: normal;
+}
+
+.Sign_Log{
+
+   display: flex; align-items: center;  justify-content: flex-end; gap: 1vw; padding-right: 3rem;
+
+}
+
+.Sign_in{
+
+  border-width: .1rem ;   color: black;
+  background: #3D9C9B; height:2.5rem ;  width:6rem ; border-radius: 12px;
+  transition: background-color .2s ease-in;
+
+}
+.Sign_in:hover{ 
+  cursor: pointer;  background-color: #2C7C7A ;
+}
+
+.Log_in{
+  border-width: .1rem ; color: black;
+  background-color:#C9A6A1 ;  height:2.5rem ;  width:6rem ; border-radius: 12px;  transition: background-color .2s ease-in;
+}
+.Log_in:hover{
+  cursor: pointer; background-color: #B28884;
+}
+
+.Profile_preferences{
+  position: relative;   display: flex; justify-content: flex-end; padding-right: 2rem;  padding-top: 1.5rem; 
+  font-size: 35px; 
+} 
+
+.Profile_preferences > svg:first-child {
+  cursor: pointer; z-index: 5;
+  user-select: none; /* Standard syntax */
+  -webkit-user-select: none; /* Safari/Chrome */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+}
+
+
+
+/*----------------------------------------------------Main page elements----------------------------------------------------------*/
+
+.First_Container{
+   position: absolute; display: flex; flex-direction: row; top: 9rem; border: solid; left: 4vw; height: 50vh ; width: 92%; border-width: .1rem; border-color: #A1887F;
+   border-radius: 50px; background-color:#EAE6D3 ; overflow: hidden;
+}
+
+/*-------------------------Text Elements------------------------------------------*/
+
+.Text_element{
+   position: relative; top:2rem ; left: 2rem; height: auto;  min-height: 50vh; width: clamp(300px, 30vw, 500px); z-index: 15;
+   padding: 2rem; 
+   
+}
+.title , .title2{
+    
+  position: relative; top: 0; left: 0;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  color: #222;
+}
+.description{
+
+  position: relative;
+  top: 2vh;
+  font-family: 'Open Sans', sans-serif; 
+  font-weight: 400;
+  color: #444;
+  line-height: 1.6;
+
+}
+.title2{
+    position: relative; top: 2.5vh;
+}
+.description2{
+  
+  position: relative;
+  top: 4vh;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  color: #444; line-height: 1.6;
+}
+
+
+.title, .title2 {
+  font-size: clamp(1.3rem, 4vw + 0.5rem, 2.2rem); /* More controlled growth */
+}
+
+.description, .description2 {
+  font-size: clamp(0.95rem, 1.5vw + 0.5rem, 1.3rem);
+}
+.title, .title2 {
+  position: relative;
+  top: 0;
+  left: 0;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  color: #222;
+  font-size: clamp(1.3rem, 3.5vw, 1.8rem); /* Optimized growth curve */
+}
+
+.description, .description2 {
+  position: relative;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  color: #444;
+  line-height: 1.6;
+  font-size: clamp(0.95rem, 1.75vw, 1.15rem);
+}
+
+/* Position adjustments */
+.title2 {
+  top: 2.5vh;
+}
+.description {
+  top: 2vh;
+}
+.description2 {
+  top: 4vh;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+    .Text_element {
+    width: 90%; /* Full width on mobile */
+    left: 1rem;
+    padding: 1rem;
+  }
+  .title, .title2 {
+    font-size: clamp(1.4rem, 1.5vw + 0.8rem, 1.8rem); /* Grows slower than mobile */
+  }
+  .description, .description2 {
+    font-size: clamp(1rem, 0.8vw + 0.7rem, 1.2rem);
+  }
+ 
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+    .Text_element {
+    width: 42%; /* Full width on mobile */
+    left: 1rem;
+    padding: 1rem;
+  }
+  .title, .title2 {
+    font-size: clamp(1.6rem, 1vw + 1.2rem, 2rem); /* Even slower growth */
+  }
+  .description, .description2 {
+    font-size: clamp(1.1rem, 0.5vw + 0.8rem, 1.3rem);
+  }
+ 
+}
+
+/* Large Desktop */
+@media (min-width: 1440px) {
+    .Text_element {
+    width: 35%; /* Full width on mobile */
+    left: 1rem;
+    padding: 1rem;
+  }
+  .title, .title2 {
+    font-size: min(2.2rem, 1.2vw + 1rem); /* Alternative syntax */
+  }
+  .description, .description2 {
+    font-size: min(1.2rem, 0.6vw + 0.6rem);
+  }
+
+
+
+}
+
+/* Fine-tuning at breakpoints */
+@media (max-width: 768px) {
+  .Text_element {
+    width: 60%; /* Full width on mobile */
+    left: 1rem;
+    padding: 1rem;
+  }
+  
+  .title, .title2 {
+    font-size: clamp(1.2rem, 4vw, 1.5rem); /* More aggressive mobile sizing */
+  }
+  
+  .description, .description2 {
+    font-size: clamp(0.9rem, 3vw, 1rem);
+  }
+ .Image_leaping_Container , .Leaping_cat{
+    display: none; 
+  }
+
+}
+/*-------------------------Text Elements------------------------------------------*/
+
+.ImagesContainer{
+ position: relative;  top: .5vh; left: 15%; display: flex; flex-direction: column; height:100% ; width: 40vw; 
+ 
+}
+
+.Image1_container{
+ position: relative; aspect-ratio: 1/1;  left: 70%;  width: 10vw ; border-radius: 100%; overflow: hidden;
+}
+.Image1{
+ position: relative; object-fit:cover ;   object-position: 25% 100% ;    height:100% ; width: 100%; 
+}
+
+.Image2_container{
+  position: absolute; aspect-ratio: 1/1; top: 5rem;  height: 25vh;   border-radius: 100%; overflow: hidden;
+}
+.Image2{
+ position: relative;  object-fit: cover; height:100%; width: 100%;  
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+
+.Paw{
+  position: relative; align-self: flex-end; left: 5rem; bottom: 5rem; height: 10vh;
+  transform: rotate(20deg); color: #CBA8A3;
+}
+.Paw2{
+  position: relative; align-self: flex-end; left: 8rem; bottom: 20rem; height: 10vh;
+  transform: rotate(-20deg); color: #CBA8A3;
+}
+.Paw3{
+  position: absolute;  left: -50rem; align-self: flex-end;  bottom: 20rem; height: 10vh;
+  transform: rotate(-20deg); color: #CBA8A3;
+}
+
+.Top-wave{
+ 
+  position: absolute; height: 100%; width: 100%; left:18%; clip-path: path("M0,0L60,32C120,64,240,128,360,128C480,128,600,64,720,74.7C840,85,960,171,1080,192C1200,213,1320,171,1380,149.3L1440,128L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z");
+  background-color: #278783;
+}
+
+/*---------------------------------------------------------------------------------------------------------------------*/
+
+        /*Media Queries 2*/
+
+/* Laptops/small desktops (≥1024px) */
+
+@media (min-width: 200px) and (max-width: 1440px) {
+  .Image_leaping_Container {
+    left: clamp(30rem, 35vw, 50rem);
+    bottom: clamp(17rem, 19.5vw, 21rem);
+  }
+
+  .Leaping_cat {
+   display: none;
+  }
+}
+
+
+/* Large desktops (≥1440px) */
+
+@media (min-width: 1440px) {
+
+.Image_leaping_Container{
+position: relative; align-self: flex-end; bottom: clamp(17rem, 18rem, 19.5rem); left: 50rem;
+}
+
+.Leaping_cat{
+    position: relative ; width: clamp(22vw, 24vw, 26vw); aspect-ratio: 1/1; z-index: 5;
+}
+
+}
+
+
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+
+
+
+.Second_Container{
+    position: absolute; display: flex; flex-direction: row; top: 45rem; border: solid; left: 4vw; height: 45vh ; width: 92%; border-width: .1rem; border-color: #A1887F;
+   border-radius: 50px; background-color:#EAE6D3 ; 
+}
+
+
+.Second_wave{
+  
+  position: absolute; overflow: hidden;  top: 10rem; left: 15vw;  height: 100%; width: 100%;  clip-path: path("M0,256L13.3,250.7C26.7,245,53,235,80,224C106.7,213,133,203,160,218.7C186.7,235,213,277,240,261.3C266.7,245,293,171,320,160C346.7,149,373,203,400,224C426.7,245,453,235,480,245.3C506.7,256,533,288,560,272C586.7,256,613,192,640,186.7C666.7,181,693,235,720,229.3C746.7,224,773,160,800,128C826.7,96,853,96,880,117.3C906.7,139,933,181,960,218.7C986.7,256,1013,288,1040,261.3C1066.7,235,1093,149,1120,117.3C1146.7,85,1173,107,1200,138.7C1226.7,171,1253,213,1280,234.7C1306.7,256,1333,256,1360,250.7C1386.7,245,1413,235,1427,229.3L1440,224L1440,320L1426.7,320C1413.3,320,1387,320,1360,320C1333.3,320,1307,320,1280,320C1253.3,320,1227,320,1200,320C1173.3,320,1147,320,1120,320C1093.3,320,1067,320,1040,320C1013.3,320,987,320,960,320C933.3,320,907,320,880,320C853.3,320,827,320,800,320C773.3,320,747,320,720,320C693.3,320,667,320,640,320C613.3,320,587,320,560,320C533.3,320,507,320,480,320C453.3,320,427,320,400,320C373.3,320,347,320,320,320C293.3,320,267,320,240,320C213.3,320,187,320,160,320C133.3,320,107,320,80,320C53.3,320,27,320,13,320L0,320Z");
+  background-color: #278783;
+}
+
+.Second_wave_container{
+ position: absolute; bottom: 0rem; height: 45vh ; width: 100%; overflow: hidden; border-radius: 50px;
+}
+
+.title_2{
+
+  position: absolute; left: 0; font-size: clamp(1.2rem, 4vw + 0.5rem, 2.3rem);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  color: #222;
+
+}
+
+
+
+.Pet_image_container{
+position: absolute;  right: 0; bottom: 0;  overflow: hidden;  border-top-right-radius: 50px; border-bottom-right-radius: 50px; 
+}
+.description_2{
+ position: absolute; font-size: clamp(1rem, 5vw, 1.5rem); top: 5rem;
+ font-family: 'Open Sans', sans-serif; 
+  font-weight: 400;
+  color: #444;
+  line-height: 1.6;
+}
+
+.Paw_ {
+ position: absolute;  height: 10vh; transform: rotate(20deg); color: #CBA8A3;
+}
+
+.Paw_2 {
+ position: absolute; height: 15vh; left: 10rem; top: 10rem; transform: rotate(-20deg); color: #CBA8A3;
+}
+.Paw_3{
+  position: absolute; height: 12vh; left: 2rem; bottom: 9px; transform: rotate(35deg); color: #CBA8A3;
+}
+
+.Check_Posts{
+  position: absolute; top: 69%; left: 34%; width: 15vw;  background-color: #278783;  z-index: 20;
+  cursor: pointer;
+  color: #FFEBD0;            /* soft beige text */
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 30px; 
+  transition: all 0.3s ease;  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+.Check_Posts:hover {
+  background-color:#3ec4bd ; color:#f8dcb8 ;
+}

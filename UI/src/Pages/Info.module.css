@@ -1,0 +1,73 @@
+*{
+    box-sizing:border-box ;
+    margin: 0;
+    padding: 0;
+    
+}
+body{
+    background-color: #ABCBA2;
+}
+
+.Main_cont{
+    position: relative; border: solid; border-color: black; border-width: .1rem; height: 60vh; width: 75vw ;
+    top: 10vh ;  left:6vw ; display: flex; flex-direction: row; gap: 3rem; padding: 2rem;
+    background-color: #D7EAE2; 
+}
+
+.Image_cont{
+   border: solid; border-width: .1rem; 
+   border-radius: 15px; height: 50vh ; width: 55vw ; 
+
+}
+.Image{
+    object-fit: cover; height: 100%; width: 100%;border-radius: 15px;
+}
+
+.Title_Desc_cont{
+    display: flex; flex-direction: column;  gap: 2rem;
+    background-color: #D7EAE2; 
+}
+
+.CatID{
+    font-size: 30px;
+    text-transform: uppercase;
+    font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  background-color: #D7EAE2; 
+  
+}
+.Description{
+    
+    font-family: 'Roboto', sans-serif;
+    background-color: #D7EAE2; 
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.5;
+   
+    
+}
+
+.Back{
+    color: #f3e5c3;
+   position: relative; top:2rem ; left: 5rem ;  height: 4vh; width: 9vw ;
+   background-color: #174E4F; cursor: pointer; border-width: .1rem; border-radius: 10px;
+   font-family: "Montserrat", sans-serif; font-weight: 500; font-size: 15px; 
+   display: flex;   align-items: center; justify-content: center; gap: 5px; 
+
+   
+
+}
+.Icon{
+    position: relative;  font-size: 15px;   right: 0; transition: right .1s ease-out 0s ;
+}
+.Back:hover .Icon{
+      position: relative;  right: 2.5rem;
+}
+
+/* -----------------------------------------Sign_in Styiling----------------------------------------------------------- */
+
+
+
+

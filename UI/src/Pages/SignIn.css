@@ -1,0 +1,51 @@
+
+ 
+ .Title{
+  
+    position: absolute; left: 50%; transform: translateX(-50%);  top: 10vh; font-size: 20px;
+
+ }
+ 
+ .Form{
+    border: solid; position: absolute; height: 45vh; width: 24vw;
+     left: 50%; transform: translateX(-50%); top: 15vh; 
+        border-width: .1rem; border-radius: 8px;
+     display: flex; flex-direction: column; gap:10px; background-color: #D7EAE2; color: #4B421B;
+    font-size: larger;
+    padding: 2rem;
+ }
+
+ .Form label{
+
+ }
+ .Form input{
+     height: 4vh ; width:20vw ; font-size: large; padding: 2px;
+ }
+
+ .eye_show{
+    position: relative; left: 90%; bottom: 4vh; font-size: 17px; cursor: pointer; width: fit-content;
+ }
+
+ .email_check{
+   position: absolute; top: 36.5%; left: 84%; 
+ }
+
+ .Pass_Label{
+   display: flex; gap: 5px;
+ }
+ .Submit{
+   height: 4vh; width: 98% ; background-color: #607EBC; color: #D1E0D7;
+   border-width: .1rem; cursor: pointer;
+ }
+
+ .ErrorBox{
+   position: absolute; color: red; bottom: 1.5vh;  
+ }
+
+ .Success{
+  position: absolute; display: flex; align-items: center; justify-content: center; border: solid; border-width: .1rem; border-radius: 15px; height: 20vh ; width: 45vw;  background-color: aquamarine;
+  top: 25%; transform: translateY(25%) ; left: 50%; transform: translateX(-50%); font-size: larger; color: green; gap: 1rem;
+
+ }
+
+ 

@@ -1,0 +1,30 @@
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{"username" : "Tarik"}
+
+###
+
+POST http://localhost:5000/token 
+Content-Type: application/json
+
+{"token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGFyaWsiLCJpYXQiOjE3NDI2NTM5MjV9.JTCtuKF_aHUzjP_PUISq6baFW3tG2BiUP35GS1lH5VY"}
+
+###
+
+DELETE http://localhost:5000/logout
+Content-Type: application/json
+
+{"token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGFyaWsiLCJpYXQiOjE3NDI2NTM5MjV9.JTCtuKF_aHUzjP_PUISq6baFW3tG2BiUP35GS1lH5VY"}
+
+###
+GET http://localhost:8080/posts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGFyaWsiLCJpYXQiOjE3NDI2NTM3MjYsImV4cCI6MTc0MjY1Mzc0Nn0.lxBuKicV1IVFAMzy2p5VsZO2GRd6h9i4Daaw69CCjRQ 
+
+###
+
+POST http://localhost:8080/Login
+Content-Type: application/json
+
+{"email" : "John@gmail.com" ,
+ "Password":"Jh123****"}

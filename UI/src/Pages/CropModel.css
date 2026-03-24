@@ -1,0 +1,110 @@
+*{
+    box-sizing:border-box ;
+    margin: 0;
+    padding: 0;
+} 
+
+.Modal_Main_Container{
+    position: absolute;  width: 100%; height:100% ; z-index: 10; display: flex; align-items: center; justify-content: center;
+    background-color: rgba(0, 0, 0, 0.349); 
+    
+} /*----Original main Container / all Page----*/
+
+
+.Cropper_Container{
+   position: relative; height: 90vh; width: 40vw;  border: solid; border-width: .1rem;
+   background-color:#012840; color: white; display: flex; flex-direction: column; gap: 2rem; overflow: hidden;
+} /*----Imagae / crop element container / middle box -----*/
+
+
+.Uploaded_Img{
+
+    position: relative; max-width: 100%;
+    height: 50vh;  display: block; object-fit: cover;   align-self: center; justify-self: center;  
+    
+} /*Uploaded Image to crop*/
+
+.Crop_Container{
+height: auto; width: auto;
+}/*Crop container*/
+
+.CloseModal{
+    position: relative ;  top: 1.9vh; right: 1rem;
+    border: solid; border-width: .1rem; align-self: flex-end; background-color: #64eafc;;
+    width: 2vw ;  border-radius: 10px; padding: 10px;
+    transition:  background-color .2s ease; font-size: clamp(0.8rem, 1.5vw, 1.5vh); display: flex; align-items: center; justify-content: center;
+}
+.CloseModal svg{
+    font-size: clamp(0.8rem, 1.5vw, 1.5vh); 
+}
+.CloseModal:hover{
+    background-color: #82f0ff ;cursor: pointer; 
+}
+
+.BG_Upload_label{
+    align-self: center ;  display: flex; align-items:center ; justify-content: center;   z-index: 2; top: 7.5vh; height: 4vh; width: 10vw;
+    
+    border: solid; border-width: .1rem;   padding: 10px; border-radius: 50px;
+    background-color: #4DD0E1; color: #012840;
+
+
+    font-size: clamp(0.4rem, 0.7vw, 1.2rem);
+    font-family: "Roboto", sans-serif;
+    font-weight: 600;
+
+   transition:  background-color .2s ease;
+}
+.BG_Upload_label:hover{
+
+    cursor: pointer;
+    background-color:  #64eafc; color: #00426b;
+
+}
+
+.BG_Upload_label_after{
+
+    display: none;
+
+}
+
+
+
+
+.Crop_Button{
+  position: relative; z-index: 7; height:50px ; width: 200px;
+  align-self: center; background-color: #4DD0E1; color: #012840;
+  margin-top: 10px;
+
+  border-radius: 20px;
+  font-size: medium;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+
+transition:  background-color .2s ease;
+}
+
+.Crop_Button:hover{
+  background-color:#61e4f5 ; cursor: pointer;
+}
+
+
+@media (max-width: 600px) {
+  .Cropper_Container{
+width: 70%; height: 60%; top: -10vh;
+}
+
+.BG_Upload_label{
+width: 35%;
+}
+.CloseModal{
+aspect-ratio: 1/1; height: 1.5rem;
+}
+
+.Uploaded_Img{
+
+height: 25vh; 
+    
+} 
+}

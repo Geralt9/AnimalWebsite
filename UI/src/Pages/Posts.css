@@ -1,0 +1,702 @@
+*{
+
+    box-sizing:border-box ;
+    margin: 0;
+    padding: 0;
+
+}
+
+.Header{
+  display: none;
+}
+
+.Ads_box{
+    position: fixed; display: flex; flex-direction: column; border: solid; right: 2%; top: 4% ; height: 60%; width: 15%;
+    border-radius: 15px ; border-width: 1.5px; padding: 2rem;   gap: 1rem; background-color: #AFC7C9
+}
+
+.Left_Navigation{
+    position: fixed; display: flex; flex-direction: column; border: solid; left: 2%; top: 4% ; height: 90%; width: 15%;
+    border-radius: 15px ; border-width: 1.5px; padding: 2rem;   gap: 1rem; background-color:#AFC7C9 ;
+}
+
+.Left_Navigation a,
+.Left_Navigation a:visited,
+.Left_Navigation a:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.Posts{
+  margin: 5rem auto;
+  width: 50%;
+  min-height: 100vh;
+  padding: 3rem;
+  border-radius: 7px;
+  background-color: #E0F7FA;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+    
+}
+
+.Post_Body{
+
+  position: relative;  border: solid; border-width: .1rem; height: 5vh ; width: 20vw; left: 50%; transform: translateX(-50%); 
+   font-size: clamp(1rem, 2vw, 1.5rem); padding: 0.75rem 1rem; border-radius: 20px; display: flex; align-items: center; justify-content: center; 
+   font-family: 'Roboto', sans-serif;  font-size: clamp(5px, 15px, 20px); background-color:#5EC5B5; color: white;
+   transition: background-color  .1s ease-in  ;
+    
+}
+
+.Post_Body:hover{
+    background-color:#90f0e1 ; cursor: pointer;
+}
+
+.Create_Post{
+
+}/*Button*/
+
+
+.Pen_Icon{
+    position: relative;  font-size: 20px; margin-left: 10px;
+}
+
+/*------------------------PopUp Styling ---------------------------*/
+.Main_Background_False , .Main_Background{
+position: fixed; top: 0; left: 0;  height: 100vh; width: 100%; background-color: rgba(0, 0, 0, 0.712); z-index: 1;
+opacity: 1; display: flex;  justify-content: center; align-items: center;
+transition: opacity .1s ease-in-out; 
+
+
+}
+
+.Main_Background_False{
+ opacity: 0;  pointer-events: none; 
+
+}
+
+.Pop_Up , .Pop_Up_False{
+
+   position: relative; display: flex; flex-direction: column; align-items: center; 
+    min-height: 20dvh; height: auto;  width:30vw ; overflow-y: auto; border: solid; opacity: 1;
+    transition: opacity .1s ease-in-out; background-color: #edf2f7; color: #1a202c;
+    border-width: .1rem ; border-radius: 25px ; gap: 2rem;
+    
+}
+
+.Pop_Up_False{
+opacity: 0;  pointer-events: none;
+}
+
+.Image_upload{
+    position: relative;  align-self: flex-end; margin-right: 15px;
+    font-size: x-large; color: #31a392; cursor: pointer; transition: color .1s ease-in;
+}
+.Image_upload:hover{
+  color: #3ecfba;
+}
+
+
+
+.Close_Pop{
+    position: absolute; top: 1.5vh; right: 0 ; margin-right: 1vw; aspect-ratio: 1; 
+    border-radius: 50%; height: 3.5vh; border-width: .1rem; background-color:#e53e3e;
+    display: flex; align-items: center; justify-content: center; font-size: larger;
+}
+
+.Close_Pop:hover{
+    cursor: pointer;  background-color: #ff6565;
+}
+
+
+.Post_Title{
+
+    position: absolute; top: 0 ; left: 50%; transform: translateX(-50%); top: 1rem;  font-size: clamp(10px , 20px , 22px);
+  font-family: "Inter", sans-serif; 
+  font-optical-sizing: auto;
+  font-weight:700;
+  font-style: normal;
+
+}
+
+.Post_Input{
+  position: relative; top: 3rem;  width: 100%;  border: none;
+  min-height: 5rem; max-height: 25vh; 
+  resize: none; padding: 1rem; font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 8px;
+  /*border-top:  solid ;  border-width: .1rem; */ font-family: 'Inter', sans-serif; background-color: #fdfdfd00;
+  transition: border-color 0.3s ease; outline: none;
+}
+
+.Post_Input:hover{
+      outline: none;
+     border-color: #82d1f5;
+}
+.Create_Post{
+   margin-top: auto; align-self: center;   margin-bottom: 1.5vh;  height: 3.5vh; 
+     width: 10vw; border-radius: 10px; border-width: .1rem; background-color: #63c9f8; transition: Background-color .2s ease-in;
+}
+.Create_Post_after{
+  
+}
+
+.Create_Post:hover{
+
+    background-color: #8fd7f8; cursor: pointer;
+
+}
+.image_upload_error{
+  color: red; margin-bottom: 20px;
+}
+
+/*----------------Post Pic Grid---------------------*/
+
+.Grid-image-wrapper img {
+ position: relative; 
+   
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  
+}
+
+.grid.single {
+  position: relative; top: 1.5rem;
+  margin-top: auto;
+  display: grid; height: auto; width:20vw ; 
+ 
+  grid-template-columns: 1fr; 
+
+}
+
+.grid.two {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  height: auto;
+}
+
+.grid.three {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 200px; /* First row auto, second fixed */
+
+}
+.grid.three .Grid-image-wrapper:nth-child(1) {
+  grid-column: span 2;
+}
+
+
+.grid.four {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 200px 200px;
+}
+.grid.four .Grid-image-wrapper:nth-child(1) {
+  grid-column: span 3;
+}
+
+.grid.maxed {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/*------------------------Feed Style------------------------------*/
+
+.Posts_inside{
+
+    position: relative;   left: 0;  width: 100%;height: auto;
+    display: flex; flex-direction: column; gap: 2rem;
+
+}
+
+.Each_Post{
+
+    border:  solid; border-width: .1rem; align-self: center ; width: 100%; 
+    height: auto; padding: 2rem ; background-color: #F5F9FF; border-radius: 14px;
+    display: flex; flex-direction: column; gap: 2vh;
+
+}
+
+.Profile_details{
+    display: flex; gap: 0vw;
+}
+
+.Profile_name{
+  font-weight: 600; 
+  font-size: 1rem;
+  color: #222;
+}
+
+.Post_date{
+  position: relative; top: 2px;
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: #666;
+  margin-left: 8px;
+}
+
+.Post_content{
+     font-size: 1rem;
+  line-height: 1.5;
+  margin-top: 8px;
+  color: #333;
+}
+
+.Image_cont_post {
+    position: relative; top: -1vh;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-right: 12px; /* spacing between image and content */
+  border: 1px solid #ddd; /* optional subtle border */
+}
+
+.Image_cont_post .Image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.Post_likes_comments_share{
+  border-top: solid; border-bottom: solid; height: 4rem; border-width: .1rem; padding: 6px; display: flex; justify-content: center; gap: 0rem ; 
+  padding-top: 10px; padding-bottom:10px ; 
+
+}
+
+.Likes{
+
+}
+
+.Liked{
+  color: red; 
+}
+
+.Unliked{
+
+}
+
+.Comments , .Likes , .Share{
+display: flex; align-self: center; justify-content: center; align-items: center;  height: 4vh ; width: 20vw ; cursor: pointer;
+border-radius: 2rem;  transition: transform .3s ease;
+}
+.Comments:hover , .Likes:hover , .Share:hover{
+  background-color: rgba(151, 151, 151, 0.336); transform: scale(1.03);
+}
+.Share{
+  
+}
+/*----------------PopUp Likes / Share/Comments*/
+
+.Like_comments_bar{
+  border-top: solid; border-width: .1rem;
+  position: relative; top: 8.5rem; height: 5vh; 
+  display: flex;
+   grid-column: 4/5 ;   
+   grid-row: 2/3;
+  
+}
+
+.Comments_PopUp , .Likes_PopUp , .Share_PopUp{
+display: flex; align-self: center; justify-content: center; align-items: center;  height: 4vh ; width: 10vw ; cursor: pointer;
+border-radius: 2rem;  transition: transform .3s ease;
+}
+.Comments_PopUp:hover , .Likes_PopUp:hover , .Share_PopUp:hover{
+  background-color: rgba(151, 151, 151, 0.336); transform: scale(1.03);
+}
+
+#Likes_PopUp_id , #Comments_PopUp_id, #Share_PopUp_id{
+  width: 100%;
+}
+
+/*-------------------Posts Images layout---------------------*/
+
+.Post_Image_Container.two{
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 5px;
+  
+}
+
+.Post_Image_Container.three{
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 5px;
+  
+}
+
+.Post_Image_Container.four{
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 5px;
+  
+}
+
+.Images_Wrapper{
+ 
+}
+
+.Post_Image{
+  object-fit: cover; height:100% ; width:100% ;
+  border-radius: 15px;
+}
+
+
+
+/*-----------------------------------Styling the Post pop up interaction --------------------------------------------*/
+
+.Posts_Interaction_container{
+
+  position: fixed; height: 100vh; width: 100%;  top: 0;  
+  background-color: #000000;  color: white;
+  display: grid; grid-template-columns: repeat(4 , 1fr) ; 
+  grid-template-rows: repeat(5 , 1fr) ; 
+
+}
+
+
+.Pics_area{
+  grid-column: 1 / 4;
+  grid-row: 1 / 6;
+
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Make a fixed frame for images */
+  width: 100%;
+  height: 100%; /* adjust to your needs */
+  overflow: hidden; /* prevents long/tall parts from spilling out */
+  position: relative;
+}
+
+.user_details_area{
+ 
+ display: flex; gap: 1rem; padding: 1rem;
+ 
+ grid-column: 4 / 5;   
+ grid-row: 1 / 2;
+
+}
+
+.user_name{
+ position: relative;  top: 1vh;
+}
+
+.Pfp_inter{
+  
+}
+.Pfp_inter img{
+
+  object-fit: cover; aspect-ratio: 1/1; width: 2.5vw; border-radius: 100%; 
+
+}
+
+.Creation_time{
+  position: relative;  top: 1vh;
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: #cecdcd;
+}
+.User_text{
+position: absolute; top: 10vh; margin-left: 1vw;
+}
+
+.Comments_section_area{
+  
+   grid-column: 4/5 ;   
+   grid-row: 3/6;
+  
+}
+
+.images_interaction{
+   max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* show the whole image without cropping */
+  display: block; object-fit: contain;
+
+}
+
+.Previous{
+  position: absolute ; left: 0; border: none; color: white; font-size: 40px; cursor: pointer;
+  height: 9vh; border-radius: 100%; aspect-ratio: 1/1 ;background-color: #00000071;
+transition: padding-right .1s ease-in;
+}
+.Next{
+position: absolute; right: 0; border: none; color: white; font-size: 40px; cursor: pointer;
+  height: 9vh; border-radius: 100%; aspect-ratio: 1/1 ; background-color: #00000071;
+transition: padding-left .1s ease-in;
+}
+
+.Next:hover {
+  padding-left: 7px;
+}
+
+.Previous:hover {
+  padding-right: 7px ;
+}
+
+.None{display: none;}
+
+.closeInterpop{
+  position: fixed; top: 15px ; left: 10px;  border: none; outline: none; background: none; 
+  
+}
+
+.closeInterpop >svg:first-child {
+color: rgb(212, 25, 25); height: 2.5rem;  cursor: pointer; 
+transition: color .1s ease-in; 
+}
+
+.closeInterpop >svg:first-child:hover{
+  color: rgb(235, 61, 61) ;
+}
+/*----------------------------------------Comment Pop-------------------------------------------------------------*/
+
+.Comment_Pop_background{
+
+  position: fixed; top: 0; height: 100vh; width: 100vw; overflow: hidden; display: flex; align-items: center; justify-content: center;
+  background-color: #0000009a;
+
+}
+
+.Mid_comment_pop{
+
+  border: solid; display: flex; flex-direction: column;  color: white; background-color: #000000; border-width: .1rem; border-radius: 10px;
+  height: 100vh ; width: 50vw; gap: 2rem;  overflow-y: auto;  overflow-x: hidden ;
+
+}
+
+.Mid_comment_pop::-webkit-scrollbar {
+  width: 10px;   
+}
+
+.Mid_comment_pop::-webkit-scrollbar-track {
+  background: transparent;  
+  margin-top: 1rem;        
+  margin-bottom: 1rem;       
+}
+
+.Mid_comment_pop::-webkit-scrollbar-thumb {
+  background-color: #555;     /* scrollbar color */
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box; /* to make it visually slimmer */
+}
+
+.Mid_comment_pop::-webkit-scrollbar-thumb:hover {
+  background-color: #888;     /* hover effect */
+}
+
+.Post_title{
+   top: 15px;  border-width: .1rem; padding: 1rem; align-self:  center;
+ 
+}
+
+.Post_likes_comments_share_Pop{
+
+  position: relative; top: 0rem; border-top: solid; border-bottom: solid; height: 4rem; border-width: .1rem; padding: 6px; display: flex; justify-content: center; gap: 5rem ; 
+  padding-top: 10px; padding-bottom:10px ; 
+ 
+}
+
+.Poster_details_comments{
+display: flex;   position: relative;  border-top: solid ; border-width: .1rem; bottom: 1.5rem; padding-top: 25px;
+    padding-left: 20px ;  color: white;
+}
+
+.Content{
+position: relative; left: 5vw; bottom: 4.5vh;
+}
+#Comment_name{
+  color: white;
+}
+
+ .Pfp_inter_comments img{
+  position: relative; left: -10px; bottom: 5px;  object-fit: cover; aspect-ratio: 1/1; width: 2.5vw; border-radius: 100%; 
+ }
+ 
+
+.Post_imgs_comments{
+
+  position: relative;  height: auto ; width: 100% ;
+  display: flex; align-items: center; cursor: pointer;
+}
+
+.Post_imgs_comments img{
+  object-fit: cover; height: 100%; width: 100%; 
+}
+
+.Comments_Area{
+
+ position: relative;  left: 1.5rem; height: auto; width: 45vw; align-self: center;
+ padding-bottom: 1rem; 
+
+}
+.Comments_popUp_Area{
+   position: relative; left: 1.5rem; height: auto; width: 45vw; align-self: center;
+ padding-bottom: 1rem;  max-height: 40vh;   /* adjust as you prefer */
+  overflow-y: auto; overflow-x: hidden;
+
+  padding-bottom: 1rem; 
+}
+
+.Comment_input{
+   position: relative;   align-self: center;
+   width: 40vw; display: flex; height: 10vh;
+} 
+
+.textarea_wrapper{
+   position: relative;
+  width: 40vw;  
+}
+
+.Comment_text{
+   width: 100%;border: solid;
+  padding: 1rem;
+  border: none;
+  border-radius: 12px;
+  background-color: #1f2937;
+  color: #f9fafb;
+  font-size: 1rem;
+  resize: none;
+  overflow-y: hidden;
+}
+
+.Comment_text::placeholder {
+  color: #9ca3af; /* cool gray-400 */
+}
+
+.Comment_text:focus {
+  outline: none;
+  background-color: #374151; /* slightly lighter on focus */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4); /* soft blue ring */
+}
+.Submit_comment{
+  position: absolute; bottom: 0.6rem; right: 0.6rem; height: 3vh;
+   display: flex; 
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: #0ea5e9; /* sky-500 */
+  color: white;
+  padding: 0.1rem 1rem;
+ 
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+
+.Submit_comment:hover ,.Submit_comment:hover{
+    background: #0284c7; /* darker blue */
+  transform: scale(1.03);
+}
+.Submit_comment,.Submit_comment:active{
+  transform: scale(0.98);
+}
+
+/*-------------------------Comments styling -----------------------*/
+
+.Comment_Content{
+  position: relative; 
+  left: 4vw; bottom: 1.6vh;
+}
+
+#Comments_area{
+  position: relative;
+  left: 4rem; top: 2rem; height: auto;
+}
+
+.Like_reply_comments{
+  display: flex ; flex-direction: column; gap: 15px;
+  padding-left : 4rem ;  
+}
+
+.Like_reply{
+  display: flex; gap: 2vw;
+}
+
+.Like_reply--postcard {
+ position: relative; left: 2vw; margin-bottom: 2vh;
+}
+
+.Like_Comment{
+cursor: pointer ;  width: .5vw;
+}
+
+.Reply_comment{
+  cursor: pointer;
+}
+
+
+/*---------------Comment reply styling--------*/
+
+.Pfp_inter_comments--reply img {
+  width: 2vw;
+  border-radius: 50%;
+}
+
+/* Reply textarea wrapper */
+.textarea_wrapper--reply {
+  position: relative;
+  width: 30vw;
+}
+
+/* Reply textarea */
+.Comment_text--reply {
+  width: 100%;
+  padding: 0.7rem;
+  resize: none;
+  margin: 0;              /* ✅ REMOVE margins */
+}
+
+/* Reply button */
+.Submit_comment--reply {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  height: 2.5vh;
+}
+
+.Comment_reply{
+ position: relative;  
+}
+
+.Pfp_inter_reply img{
+  position: relative; aspect-ratio: 1/1; border-radius:100px;  width: 2vw; 
+  top: 1; bottom: 1vh; margin-top: 1rem; 
+}
+
+.reply_Like{
+  position: relative; left: 4vw; display: flex ; gap: 2vw;
+}
+
+
+.Reply_block{
+display: flex; flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-left: 4rem; /* indent under parent comment */
+}
+
+.profilereplybox_wrapper{
+   position: relative; left: -2vw;  display: flex;
+}
+.profilereplybox_wrapper2{
+  position: relative; left: 2vw;  display: flex;
+}
