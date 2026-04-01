@@ -1,51 +1,148 @@
+* {
+  box-sizing: border-box;
+}
 
- 
- .Title{
-  
-    position: absolute; left: 50%; transform: translateX(-50%);  top: 10vh; font-size: 20px;
+html,
+body {
+  min-height: 100vh;
+  margin: 0;
+}
 
- }
- 
- .Form{
-    border: solid; position: absolute; height: 45vh; width: 24vw;
-     left: 50%; transform: translateX(-50%); top: 15vh; 
-        border-width: .1rem; border-radius: 8px;
-     display: flex; flex-direction: column; gap:10px; background-color: #D7EAE2; color: #4B421B;
-    font-size: larger;
-    padding: 2rem;
- }
+.Title {
+  text-align: center;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  font-size: clamp(1.8rem, 2vw, 2.5rem);
+  color: #4b421b;
+}
 
- .Form label{
+.Form {
+  width: min(90vw, 450px);
+  min-height: 60vh;
+  margin: 0 auto;
+  margin-top: 1rem;
+  border: solid 0.1rem;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  color: #4b421b;
+  font-size: 1rem;
+  position: relative;
 
- }
- .Form input{
-     height: 4vh ; width:20vw ; font-size: large; padding: 2px;
- }
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.12);
+}
 
- .eye_show{
-    position: relative; left: 90%; bottom: 4vh; font-size: 17px; cursor: pointer; width: fit-content;
- }
+.Form input {
+  width: 100%;
+  min-height: 44px;
+  font-size: 1rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid #4b421b;
+  outline: none;
+}
 
- .email_check{
-   position: absolute; top: 36.5%; left: 84%; 
- }
+.Pass_Label {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
 
- .Pass_Label{
-   display: flex; gap: 5px;
- }
- .Submit{
-   height: 4vh; width: 98% ; background-color: #607EBC; color: #D1E0D7;
-   border-width: .1rem; cursor: pointer;
- }
+.password_wrapper {
+  position: relative;
+  width: 100%;
+}
 
- .ErrorBox{
-   position: absolute; color: red; bottom: 1.5vh;  
- }
+.password_wrapper input {
+  width: 100%;
+  padding-right: 3rem;
+}
 
- .Success{
-  position: absolute; display: flex; align-items: center; justify-content: center; border: solid; border-width: .1rem; border-radius: 15px; height: 20vh ; width: 45vw;  background-color: aquamarine;
-  top: 25%; transform: translateY(25%) ; left: 50%; transform: translateX(-50%); font-size: larger; color: green; gap: 1rem;
+.eye_show {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  cursor: pointer;
+  width: fit-content;
+}
 
- }
+.Submit {
+  min-height: 44px;
+  width: 70%; align-self: center;
+  background-color: #3a6fd8;
+  color: #d1e0d7;
+  border-width: 0.1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  margin-top: auto;
+  font-size: 1rem;
+}
 
- 
+.Submit:hover {
+  background-color: #5197ff;
+  color: #d1e0d7;
+  transition: background-color 0.3s ease;
+}
+
+.LogInLink {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.ErrorBox {
+  color: red;
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+  text-align: center;
+}
+
+.Success {
+  width: min(90vw, 600px);
+  margin: 4rem auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: solid 0.1rem;
+  border-radius: 15px;
+  min-height: 120px;
+  background-color: aquamarine;
+  font-size: 1rem;
+  color: green;
+  gap: 1rem;
+  padding: 1rem;
+  text-align: center;
+  flex-wrap: wrap;
+}
+
+.Success a {
+  color: inherit;
+}
+
+@media (max-width: 600px) {
+  .Title {
+    margin-top: 2rem;
+    font-size: 1.7rem;
+  }
+
+  .Form {
+    width: 92vw;
+    min-height: 55vh;
+    padding: 1rem;
+  }
+
+  .Form input,
+  .Submit {
+    font-size: 0.95rem;
+  }
+
+  .Success {
+    width: 92vw;
+    font-size: 0.95rem;
+  }
+}

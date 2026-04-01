@@ -162,7 +162,7 @@ function HandleClickOutside(e){
             </div>
 
 
-          </section>
+          </section> 
 
           <section className='Second_Container' > 
 

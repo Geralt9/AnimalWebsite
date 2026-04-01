@@ -35,16 +35,23 @@ export default function  SignIn(){
   
 const{AuthenticateStatus, setAuthenticate } = useAuthenticate();
 
-  useEffect(() => {
-    document.body.style.backgroundImage = "url('https://lagrandclassique.com/cdn/shop/products/01457_cat_breeds_main.jpg?v=1708938827')";
-    document.body.style.backgroundSize = "cover"; // Make sure the image covers the whole screen
-       //document.body.style.filter = "blur(5px)"
-    document.body.style.backgroundRepeat = "no-repeat"; // Prevent tiling 
+ useEffect(() => {
+  document.body.style.backgroundImage = "url('../Icons_Images/Scene-24.jpg')";
+  document.body.style.backgroundSize = "cover";
+  document.body.style.backgroundRepeat = "no-repeat";
+  document.body.style.backgroundPosition = "center";
+  document.body.style.minHeight = "100vh";
+  document.body.style.margin = "0";
 
-    return () => {
-      document.body.style.backgroundColor = ""; // Reset when component unmounts
-    };
-  }, []);
+  return () => {
+    document.body.style.backgroundImage = "";
+    document.body.style.backgroundSize = "";
+    document.body.style.backgroundRepeat = "";
+    document.body.style.backgroundPosition = "";
+    document.body.style.minHeight = "";
+    document.body.style.margin = "";
+  };
+}, []);
 
 
 function showPass(e){
@@ -83,7 +90,7 @@ function HandlePassword(e){
 
 
     }
-
+ 
 function HandleEmail(e){
     const value = e.target.value ;
     SetemailAddress(value) ;
@@ -158,28 +165,44 @@ async function Submit(e){
 
 {success ? <div className="Success"> Account created ! <FontAwesomeIcon icon={faCircleCheck} />  <a  href='/Log_in' target='' rel="noopener noreferrer"> Back to the main Page </a> </div> :<>  <div className="Title"> SIGN UP </div>
 
-<form className="Form" onSubmit={Submit} > 
+   <div className="LogInLink"> Already have an account ? <a  className="HyperLog" href="/Log_In" rel="noopener noreferrer"> Log In</a>  </div>
 
-<label > Full name : {Verifyname} </label>      
-<input onChange={HandleName} value={Fullname} />
+<form className="Form" onSubmit={Submit}>
+  <label>Full name : {Verifyname}</label>
+  <input onChange={HandleName} value={Fullname} />
 
-<label >Email Address :</label>  
-<input onChange={HandleEmail}  value={emailAddress}/>
-<div className="email_check" > {Verifyemail} </div>
+  <label>Email Address :</label>
+  <div className="input_with_icon">
+    <input onChange={HandleEmail} value={emailAddress} />
+    <div className="email_check">{Verifyemail}</div>
+  </div>
 
-<label className="Pass_Label"> Password : {PasswordStrength ==='Strong' ? (<div style={{color: 'green'}} > Strong </div>) : PasswordStrength ==='Weak' ? (<div style={{color: 'green'}} > Weak </div>) : <></> } </label>
-<input type={showPassword ? "text" : "password"} onChange={ HandlePassword } value={Password} />
+  <label className="Pass_Label">
+    Password :
+    {PasswordStrength === "Strong" ? (
+      <div style={{ color: "green" }}>Strong</div>
+    ) : PasswordStrength === "Weak" ? (
+      <div style={{ color: "red" }}>Weak</div>
+    ) : null}
+  </label>
 
-     <div  className="eye_show" onClick={ showPass }> { showPassword ? <FontAwesomeIcon icon={faEye} /> :    <FontAwesomeIcon icon={faEyeSlash} /> }</div>
+  <div className="password_wrapper">
+    <input
+      type={showPassword ? "text" : "password"}
+      onChange={HandlePassword}
+      value={Password}
+    />
+    <div className="eye_show" onClick={showPass}>
+      {showPassword ? <FontAwesomeIcon icon={faEye} /> : <FontAwesomeIcon icon={faEyeSlash} />}
+    </div>
+  </div>
 
   <button type="Submit" className="Submit" disabled={isLoading}>
-{isLoading ? "Signing Up..." : "Sign Up"}
+    {isLoading ? "Signing Up..." : "Sign Up"}
   </button>
 
-  <a href="/Log_In" target="" rel="noopener noreferrer"> <div> Already have an account ? </div></a>
 
-  <div className="ErrorBox" > {error} </div>
-
+  <div className="ErrorBox">{error}</div>
 </form>  </>}
   
 

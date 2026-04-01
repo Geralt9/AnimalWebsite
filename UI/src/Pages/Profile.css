@@ -1,335 +1,409 @@
- *{
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-    
-  }
-
-.main_cont{
-
- position: absolute; border: solid; border-top: none; border-bottom: none; border-width: .1rem; left: 50%; transform: translateX(-50%);  height: 100vh; width: 100vw;
- background-color: #012840; color: #C9E2F2; overflow-x: hidden;
-
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
- .Profile_images{
-  border: solid;
-  width: auto; /* Let it expand naturally */
-  border-width: .1rem;
-  position: relative; /* Needed for absolute children */
-  min-height: 30vh; 
-  
+html,
+body {
+  min-height: 100vh;
 }
 
-
-.Pfp{
-
- position: absolute;  right: 5vw ; top: 8% ;  border: solid; border-radius: 100%; border-width: .1rem; 
-  width:15vw ; aspect-ratio: 1/1; color: black; display: flex; align-items: center; justify-content: center;
-  overflow: hidden; z-index: 5;
+body {
+  color: #c9e2f2;
+  font-family: "Segoe UI", sans-serif;
 }
 
-.ModifyPfp{
-  position: absolute; transform: translateY(-35%); bottom: -5%; font-size:clamp(0.8rem, 1.5vw, 2rem);  color: #00426b;
-  border: solid; border-radius: 50px;  padding: 7px; border-width: .1rem; background-color:   #82f0ff;
-  transition: background-color .2s ease-in , color .2s ease-in; 
+img {
+  max-width: 100%;
+  display: block;
 }
 
-.ModifyPfp:hover{
-  background-color: #9cf3ff; color:#0076c0 ; cursor: pointer;
+button,
+input,
+textarea {
+  font: inherit;
 }
 
-
-
-.Default_Pfp{
-  object-fit: cover; min-height: 100%; min-width: 170%;
+.profile_page {
+  min-height: 100vh;
+  padding: 0 1rem 3rem;
+  background:
+    linear-gradient(rgba(1, 40, 64, 0.78), rgba(1, 40, 64, 0.9)),
+    #0047ab;
 }
 
-.Background_Image{
- 
+.profile_feed {
+  width: min(100%, 980px);
+  margin: 0 auto;
+  background-color: #012840;
+  border-left: 1px solid rgba(201, 226, 242, 0.2);
+  border-right: 1px solid rgba(201, 226, 242, 0.2);
+  min-height: 100vh;
+}
+
+.profile_header {
   position: relative;
-  height: 30vh; /* 30vh original */ 
-  width: 100%; /* Changed from auto to 100% */
-  background-color: aliceblue;
+}
+
+.Background_Image {
+  position: relative;
+  height: clamp(180px, 30vh, 320px);
+  width: 100%;
+  background: linear-gradient(135deg, #114a72, #0a2e4a);
   display: flex;
   align-items: center;
-  justify-content: center; /* Center crop area */
+  justify-content: center;
+  overflow: hidden;
+}
 
- 
-} /*Parent of BackgroundUpload*/
+.BackgroundUpload {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-.BG_Uploaded_label{
-  padding-top:5rem ;
-   position: relative; 
-   display: none;
+.BgSilouhette {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0.18;
+  font-size: clamp(5rem, 18vw, 14rem);
+  z-index: 1;
+}
+
+.HiddenBgSilouhette {
+  display: none;
+}
+
+.AddBG {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: #31abff;
+  color: #fff;
+  font-size: 1rem;
+  z-index: 3;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.AddBG:hover {
+  background-color: #89cff0;
+  transform: translateY(-1px);
+}
+
+.profile_identity {
+  position: relative;
+  padding: 0 1.25rem 1.25rem;
+}
+
+.Pfp {
+  position: relative;
+  width: clamp(92px, 16vw, 150px);
+  aspect-ratio: 1 / 1;
+  margin-top: -3.5rem;
+  border: 4px solid #012840;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #dbeafe;
   z-index: 4;
 }
 
-.Bg_non_uploaded_label{
-
-  position: absolute; display: flex; align-items:center ; justify-content: center;   z-index: 2; top: 7.5vh; height: 3.5vh; width: 8vw;
-    
-    border: solid; border-width: .1rem;  font-size: 20px; padding: 10px; border-radius: 50px;
-    background-color: #4DD0E1; color: #012840;
-
-    font-size: clamp(0.6rem, 1.5vw, 1.2rem);
-    font-family: "Roboto", sans-serif;
-    font-weight: 500;
-
-  transition:  background-color .2s ease;
-
+.Default_Pfp {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.Bg_non_uploaded_label:hover{
-    cursor: pointer;
-    background-color:  #64eafc; color: #00426b;
+.ModifyPfp {
+  position: absolute;
+  right: 0.4rem;
+  bottom: 0.4rem;
+  width: 34px;
+  height: 34px;
+  padding: 0.45rem;
+  border: 1px solid #0a314f;
+  border-radius: 50%;
+  background-color: #82f0ff;
+  color: #00426b;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
-.closePopUp{
-  
-  position: relative ;  top: 1.9vh; display: flex; align-items: center; justify-content: center; 
-  border: solid; border-width: .1rem; align-self: flex-end; background-color: #64eafc;;
-   right: 2rem;  width: 2vw ;  border-radius: 10px; padding: 10px;
-  transition:  background-color .2s ease; font-size: clamp(0.8rem, 1.5vw, 1.5vh);
-
+.ModifyPfp:hover {
+  background-color: #9cf3ff;
+  color: #0076c0;
+  transform: scale(1.05);
 }
 
-.closePopUp:hover{
-  background-color: #82f0ff ;cursor: pointer;  
-}
-
-/*-------------------Container & Cropper ------------------------------*/
-
-
+/* crop popup */
 
 .BG_CropPopUp {
-
-  position: absolute; height:100% ; width: 100%;  background-color: rgba(0, 0, 0, 0.349);  z-index: 5;
-  display: flex; align-items:center ; justify-content: center; color: white;
-  flex-direction: column; opacity: 0; 
-  transition: opacity .2s ease-in ;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.55);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  opacity: 0;
   pointer-events: none;
-
+  transition: opacity 0.2s ease-in;
 }
 
-.BG_CropPopUp.Visible{
+.BG_CropPopUp.Visible {
   opacity: 1;
   pointer-events: auto;
 }
 
-.AddBG{
-
-  position: absolute; border: none; border-radius: 50px;  z-index: 1;  height: 5vh;
-  top: 13%;  border-width: .1rem;   aspect-ratio: 1 / 1; 
-  border-radius: 50%; cursor: pointer; background-color: #31ABFF;
-  font-size: clamp(0.8rem, 1.5vw, 1.5vh);  z-index:6 ; transform: translateY(-100%); top: 93%; left: 1vw; font-size: 22px;
-
-  transition: background-color .1s ease-in 0s , color .2s ease-in;
-
+.Container_Crop_Before {
+  opacity: 0;
+  pointer-events: none;
 }
 
-.AddBG:hover{
-  color: aliceblue;
-  background-color: #89CFF0 ;
-}
-.HiddenBgSilouhette{
-  display: none;
-}
-.BgSilouhette {
-  
- position: absolute; transform: translateX(-50%); left: 50%; opacity: 1; 
- font-size: 17rem;  z-index:2 ;  
-
-}
-
-.AddBG_after{
-  display: none; 
-}
-
-.Container_Crop_Before{
-  opacity: 0;  
-  
-}
-
-.Container_Crop{
-
-  border: solid; height: 90vh; width: 40vw; border-width:.1rem ;
-  display: flex; flex-direction: column; align-items: center; gap: 4rem; 
-  background-color:#012840; opacity: 1;
-  transition: opacity 0.01s ease;
-
-}/*Main container*/
-
-.BG_Crop_element{
-
-  position: relative;
-  
-  
-  width: 100%;
-  height: auto;
-  overflow: hidden; 
-  
-  
-  display: flex; flex-direction: column; 
-}
-
-.BackgroundUpload{
- 
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  
-
-}
-
-.ApplyCrop{
-  position: relative; z-index: 7; height:50px ; width: 200px;
-  align-self: center; background-color: #4DD0E1; color: #012840;
-  margin-top: 10px;
-
-  border-radius: 20px;
-  font-size: medium;
-  font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 500;
-  font-style: normal;
-
-transition:  background-color .2s ease;
-}
-
-.ApplyCrop:hover{
-  background-color:#61e4f5 ; cursor: pointer;
-}
-
-.Preview_Box{
- position: relative;  height: 30vh; border: solid; border-width: .1rem; padding-bottom: 2rem ;
-}
- /*----------------------- Responsive design -------------------------------*/
-
-@media (max-width : 600px){
-  .main_cont{
-height: 100%; width: 100%;
-}
-
-.Background_Image{
-  height: auto; /* 30vh original */ 
-  width: auto; /* Changed from auto to 100% */
-
-}
-
-.AddBG{
-
-display: flex ; align-items: center; justify-content: center;
-height: 3vh;
-
-}
-.AddBG >svg:first-child{
- font-size: 20px;
-}
-
-.Pfp{
-
- position: absolute;  transform: translateX(-50%); left: 50% ; top: 3rem;  border: solid; border-radius: 100%; border-width: .1rem; 
-  width:30vw ; aspect-ratio: 1/1; 
-}
-
-.ModifyPfp{
-  position: absolute; transform: translateY(70%); top: 60%; aspect-ratio: 1/1; height: 10%; 
-  font-size: 15px;
-}
-
-
-  .Container_Crop{
-width: 70%; height: 60%; top: -10vh;
-}
-
-.Bg_non_uploaded_label{
- position: relative; width: 35%; top: -2rem;
-}
-
-
-.closePopUp{
-aspect-ratio: 1/1; height: 2rem; display: flex;
-}
-
-.Uploaded_Img{
-
-height: 25vh; 
-    
-} 
-
-
-}
-
-/*-----------------------------------------profile details section-----------------------------------------------*/
-
-.Profile_details1 {
-  
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(4, 1fr);
- 
-  width: 80vw;
-  height: 60vh;
-  margin: 10vh auto;
+.Container_Crop {
+  width: min(100%, 760px);
+  max-height: 90vh;
+  overflow: auto;
+  border: 1px solid rgba(201, 226, 242, 0.25);
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background-color: #012840;
   padding: 1rem;
+}
 
+.closePopUp {
+  align-self: flex-end;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #7dd3fc;
+  border-radius: 10px;
+  background-color: #64eafc;
+  color: #012840;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
 
+.closePopUp:hover {
+  background-color: #82f0ff;
+}
+
+.Bg_non_uploaded_label,
+.BG_Uploaded_label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  min-height: 44px;
+  min-width: 150px;
+  padding: 0.75rem 1.2rem;
+  border: 1px solid #0b4a64;
+  border-radius: 999px;
+  background-color: #4dd0e1;
+  color: #012840;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.Bg_non_uploaded_label:hover,
+.BG_Uploaded_label:hover {
+  background-color: #64eafc;
+}
+
+.BG_Crop_element {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
 }
 
+.ApplyCrop {
+  align-self: center;
+  min-height: 44px;
+  width: min(100%, 220px);
+  background-color: #4dd0e1;
+  color: #012840;
+  border: 1px solid #0b4a64;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.ApplyCrop:hover {
+  background-color: #61e4f5;
+}
+
+.Preview_Box {
+  display: none;
+}
+
+/* feed cards */
+
+.Profile_details1 {
+  width: 100%;
+  padding: 1.25rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+  gap: 1rem;
+  align-items: start;
+}
+
+.card {
+  border: 1px solid rgba(201, 226, 242, 0.16);
+  border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(173, 216, 230, 0.12);
+}
+
 .Bio {
-  border: solid; border-width: .1rem; background-color: #1E3A8A;
-  border-radius: 20px ; box-shadow: 0 2px 10px rgba(173, 216, 230, 0.15);
-  grid-column: 1 / 3;   
-  grid-row: 1 / 3;   padding: 1rem;
- display: flex; flex-direction: column; gap: 2rem ;
-
+  background-color: #1e3a8a;
+  padding: 1rem;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
-          /*-------------------------- Profile details ------------------------------*/
+
+.Bio_Title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.Text_Bio_Container,
+.bio_editor {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+}
+
+.bio_content {
+  flex: 1;
+  line-height: 1.6;
+  color: #eff6ff;
+  word-break: break-word;
+}
+
+.Bio_text {
+  width: 100%;
+  min-height: 140px;
+  padding: 1rem;
+  border: none;
+  border-radius: 12px;
+  background-color: #1f2937;
+  color: #f9fafb;
+  font-size: 1rem;
+  resize: vertical;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.Bio_text::placeholder {
+  color: #9ca3af;
+}
+
+.Bio_text:focus {
+  outline: none;
+  background-color: #374151;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+}
+
+.Edit_Bio,
+.Save_bio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  align-self: flex-start;
+  min-height: 42px;
+  padding: 0.65rem 1rem;
+  background: #0ea5e9;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.Edit_Bio:hover,
+.Save_bio:hover {
+  background: #0284c7;
+  transform: scale(1.03);
+}
+
 .Pet_details {
-
-  border: solid; border-width: .1rem; background-color: #0F766E;
-  border-radius: 20px ; box-shadow: 0 2px 10px rgba(173, 216, 230, 0.15);
-  grid-column: 3 / 5;  
-  grid-row: 1 / 5;       padding: 1rem;
- display: grid; grid-template-columns: repeat(4 , 1fr) ; grid-template-rows: repeat(4 , 1fr); gap: 10px;
+  background-color: #0f766e;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 540px;
 }
 
-.Pet_title{
-  grid-column: 1/3 ; grid-row: 1/2 ;
-    font-family: 'Poppins', sans-serif;
-  font-size: 2rem; /* ~32px */
+.Pet_title {
+  font-family: "Poppins", sans-serif;
+  font-size: clamp(1.35rem, 2vw, 1.9rem);
   font-weight: 700;
-  color: #f0f8ff; /* soft white-blue */
-  letter-spacing: 1.2px;
-  margin-bottom: 50px;
-  text-transform: uppercase; /* PET DETAILS */
-  border-bottom: 2px solid #ffffff44; /* underline effect */
-  padding-bottom: 5px;
+  color: #f0f8ff;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 2px solid #ffffff44;
+  padding-bottom: 0.5rem;
 }
 
-/*--------------------------------Form and its components-----------------------------------------*/
-.Pet_form{
-  display: flex;  grid-column: 1 / 4; grid-row: 2 / 4; 
-  align-self: start;  margin-top: -3rem;
-  flex-direction: column; gap: 1rem; 
-  max-width: 400px;  
-  padding: 2rem;  background: #f9f9f9;
-  border-radius: 12px;  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
+.pet_main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 130px;
+  gap: 1rem;
+  align-items: start;
+}
 
+.Pet_form,
+.form_details {
+  width: 100%;
+  padding: 1.25rem;
+  background: #f9f9f9;
+  color: #1f2937;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.Pet_form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
 }
 
 .Pet_form label {
-  font-weight: bold;
-  margin-bottom: 0.3rem;
+  font-weight: 700;
+  margin-bottom: 0.1rem;
   color: #333;
 }
 
 .Pet_form input[type="text"],
 .Pet_form input[type="number"] {
-  padding: 0.6rem;
+  width: 100%;
+  min-height: 42px;
+  padding: 0.65rem 0.8rem;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 1rem;
@@ -345,12 +419,13 @@ height: 25vh;
 
 .sex_options {
   display: flex;
-  gap: 1.5rem;
-  margin-top: 0.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.35rem;
 }
 
 .sex_options label {
-  font-weight: normal;
+  font-weight: 500;
   cursor: pointer;
 }
 
@@ -358,207 +433,239 @@ height: 25vh;
   margin-right: 0.4rem;
 }
 
-.Submit_Pet_Card{
-  position: absolute; bottom: 3.5rem; margin-left: 14rem; cursor: pointer;
-  height: 4vh ; width: 6vw ; background: #0ea5e9; color: white;
-  border-radius: 9.5px ; border-width: .1rem;   font-size: 1rem; font-weight: 600;
-  transition: background .3s ease-in , transform .3s ease;
+.Form_Error {
+  color: red;
+  font-size: 0.95rem;
 }
-.Submit_Pet_Card:hover , .Cancel_Pet_Card:hover{
+
+.pet_form_actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.Submit_Pet_Card,
+.Cancel_Pet_Card,
+.Edit_form_Butt {
+  min-height: 42px;
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+  background: #0ea5e9;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.3s ease-in, transform 0.3s ease;
+}
+
+.Cancel_Pet_Card {
+  background: #0d72a1;
+}
+
+.Submit_Pet_Card:hover,
+.Cancel_Pet_Card:hover,
+.Edit_form_Butt:hover {
   background: #1490ca;
-   transform: scale(1.03);
+  transform: scale(1.03);
 }
 
-.Cancel_Pet_Card{
-    position: absolute; bottom: 25rem; margin-left: 18rem; cursor: pointer;
-  height: 3vh ; width: 3vw ; background: #0d72a1; color: white;
-  border-radius: 9.5px ; border-width: .1rem;   font-size: 1rem; font-weight: 600;
-  transition: background .3s ease-in , transform .3s ease;
+#Form_title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #36526e;
+  text-align: center;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 2px solid #3498db;
+  display: inline-block;
+  padding-bottom: 0.3rem;
 }
 
-.form_details{
-  display: flex;  grid-column: 1 / 4; grid-row: 2 / 4; 
-  align-self: start;  margin-top: -3rem;
-  flex-direction: column; gap: 1rem; 
-  max-width: 400px;  
-  padding: 2rem; color: #4a90e2; background: #f9f9f9;
-  border-radius: 12px;  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
+#form_sub_element {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #34495e;
+  margin-bottom: 0.6rem;
+  display: block;
+  letter-spacing: 0.5px;
 }
 
-#Form_title{
-    font-size: 1.8rem;    
-  font-weight: 600;        color: #36526e;        
-  text-align: center;     margin-bottom: 1rem;   
-  letter-spacing: 1px;      text-transform: uppercase; border-bottom: 2px solid #3498db; 
-  display: inline-block;   padding-bottom: 0.3rem;
-}
-
-#form_sub_element{
-  font-size: 1rem;          /* Bigger than default text */
-  font-weight: 500;         /* Medium weight */
-  color: #34495e;           /* Darker shade for readability */
-  margin-bottom: 0.6rem;    /* Space between labels */
-  display: block;           /* Each label on a new line */
-  letter-spacing: 0.5px; 
-}
-#form_sub_element::before{
-    content: "• ";            /* Bullet to highlight each field */
-  color: #3498db;           /* Accent color */
+#form_sub_element::before {
+  content: "• ";
+  color: #3498db;
   font-weight: bold;
 }
 
-.Edit_form_Butt{
-  cursor: pointer;  height: 4vh ;  background: #0ea5e9; color: white;
-  border-radius: 9.5px ; border-width: .1rem;   font-size: 1rem; font-weight: 600;
-  transition: background .3s ease-in , transform .3s ease;
+.pet_media_panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-.Edit_form_Butt:hover{
-    background: #1490ca;
-   transform: scale(1.03);
+.pet_image {
+  position: relative;
+  width: 130px;
+  aspect-ratio: 1 / 1;
+  border: 1px solid rgba(1, 40, 64, 0.2);
+  background-color: #e0f4ff;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
-/*-------------------------------------------------------------------------*/
-
-.pet_image{
-border: solid; border-width: .1rem; grid-column: 4/5 ; grid-row: 1/4 ;  background-color: #E0F4FF; /* light blue */  border-radius: 10px;
-height: 20vh; width:10vw ;
-display: flex; align-items: center; justify-content: center;
+.animal_silhouette {
+  position: absolute;
+  opacity: 0.4;
+  z-index: 0;
+  width: 72%;
 }
 
-.animal_silhouette{
-  position: absolute; opacity: .5; z-index: 0;
-} 
-
-.pet_image_upload{
-    border: solid; aspect-ratio: 1/1; border-radius: 100%; border-style: dotted; border-width: .1.5rem; cursor: pointer;
-    height: 10vh; display: flex; align-items: center; justify-content: center; transition: color .2s ease-in;  z-index: 1;
+.pet_image_upload {
+  position: relative;
+  z-index: 1;
+  width: 64px;
+  height: 64px;
+  border: 2px dotted #70c6f5;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease-in, border-color 0.2s ease-in;
 }
 
-.pet_image_upload svg{
-  font-size: 60px; cursor: pointer;  color: #70c6f5;
-  transition: color .1s ease-in;
+.pet_image_upload svg {
+  font-size: 2rem;
+  color: #70c6f5;
+  transition: color 0.1s ease-in;
 }
 
-.pet_image_upload svg:hover, .pet_image_upload:hover{
- color: #1fa0e6;
+.pet_image_upload:hover,
+.pet_image_upload:hover svg {
+  color: #1fa0e6;
+  border-color: #1fa0e6;
 }
 
-
-.pet-image{
-object-fit: cover ; height: 100% ; width:100% ; border-radius: 10px ; 
-   display: flex; 
+.pet-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.pet_image_reupload{
-  position: absolute;  right: 12.5%; bottom: 36.5%; 
-  margin-bottom: 5px;  font-size: 20px; color: black; cursor: pointer;
-  transition: color .1s ease-in;
+.pet_image_reupload {
+  font-size: 1.1rem;
+  color: black;
+  cursor: pointer;
+  transition: color 0.1s ease-in;
 }
 
-.pet_image_reupload:hover{
+.pet_image_reupload:hover {
   color: white;
 }
-
-/*-------------------------- ---------------------------- ------------------------------*/
 
 .Routes_box {
-
-  border: solid; border-width: .1rem; background-color: #7C3AED;
-  border-radius: 20px ; box-shadow: 0 2px 10px rgba(173, 216, 230, 0.15);
-  grid-column: 1 / 3;  
-  grid-row: 3 / 5;       padding: 1rem;
- 
-
+  background-color: #7c3aed;
+  padding: 1rem;
+  min-height: 180px;
 }
 
- .Bio_text {
-  position: relative; bottom: 1rem;
-  width: 100%;
-  
-  height: 120px;  padding: 1rem;
-  border: none; border-radius: 12px; background-color: #1f2937; 
-  color: #f9fafb;  font-size: 1rem; font-family: 'Segoe UI', sans-serif;  resize: vertical; 
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); transition: box-shadow 0.3s ease, background-color 0.3s ease;
+/* responsive */
+
+@media (max-width: 900px) {
+  .Profile_details1 {
+    grid-template-columns: 1fr;
+  }
+
+  .Pet_details {
+    min-height: unset;
+  }
 }
 
-.Bio_text::placeholder {
-  color: #9ca3af; /* cool gray-400 */
+@media (max-width: 700px) {
+  .profile_page {
+    padding: 0 0 2rem;
+  }
+
+  .profile_feed {
+    width: 100%;
+    border-left: none;
+    border-right: none;
+  }
+
+  .profile_identity {
+    padding: 0 1rem 1rem;
+  }
+
+  .Pfp {
+    margin-top: -2.8rem;
+  }
+
+  .Profile_details1 {
+    padding: 1rem;
+  }
+
+  .pet_main {
+    grid-template-columns: 1fr;
+  }
+
+  .pet_media_panel {
+    align-items: flex-start;
+  }
+
+  .pet_image {
+    width: 120px;
+  }
+
+  .Container_Crop {
+    padding: 0.9rem;
+    width: 100%;
+  }
 }
 
-.Bio_text:focus {
-  outline: none;
-  background-color: #374151; /* slightly lighter on focus */
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4); /* soft blue ring */
-}
+@media (max-width: 480px) {
+  .Background_Image {
+    height: 190px;
+  }
 
-.Bio_Title{
-    font-size: 1.1rem;
-  font-weight: 600;
-  color: #f1f5f9; /* light slate */
-  padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  
-  font-family: 'Segoe UI', sans-serif;
-}
+  .AddBG {
+    left: 0.8rem;
+    bottom: 0.8rem;
+    width: 42px;
+    height: 42px;
+  }
 
-.Text_Bio_Container{
-   display: flex ; flex-direction: column; height: 100%;
-}
+  .Bio,
+  .Pet_details,
+  .Routes_box {
+    border-radius: 16px;
+  }
 
-.Bio_pen{
-  position: relative; right:0 ;
-}
+  .Pet_form,
+  .form_details {
+    padding: 1rem;
+  }
 
-.Edit_Bio {
-  position: relative; top: 5rem; left: 15rem; display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  background: #0ea5e9; /* sky-500 */
-  color: white;
-  padding: 0.5rem 1rem;
- 
-  font-size: 0.9rem;
-  font-weight: 500;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
-width: 8vw;
-  
-  margin-left: auto;
-  margin-right: auto;
-  font-family: 'Segoe UI', sans-serif;
-}
-.Save_bio{
-  position: relative; bottom: .5rem ; left: 13.5rem; display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  background: #0ea5e9; /* sky-500 */
-  color: white;
-  padding: 0.5rem 1rem;
- 
-  font-size: 0.9rem;
-  font-weight: 500;
-  border: none; 
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
-  width: 8vw;
-  
-  margin-left: auto;
-  margin-right: auto;
-  font-family: 'Segoe UI', sans-serif;
-}
+  .pet_form_actions {
+    flex-direction: column;
+  }
 
-.Edit_Bio:hover ,.Save_bio:hover{
-    background: #0284c7; /* darker blue */
-  transform: scale(1.03);
-}
-.Edit_Bio,.Save_bio:active{
-  transform: scale(0.98);
-}
+  .Submit_Pet_Card,
+  .Cancel_Pet_Card,
+  .Edit_form_Butt,
+  .Edit_Bio,
+  .Save_bio {
+    width: 100%;
+  }
 
+  .Bg_non_uploaded_label,
+  .BG_Uploaded_label {
+    width: 100%;
+    max-width: 220px;
+  }
+}
