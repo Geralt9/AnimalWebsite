@@ -9,6 +9,9 @@ import {
 import imageCompression from "browser-image-compression";
 
 import "./Profile.css";
+
+const API = import.meta.env.VITE_API_URL;
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 import { useAuthenticate } from "./AuthenticateContext.jsx";
 import { useEffect, useState, useRef } from "react";
 import ReactCrop, { makeAspectCrop, convertToPixelCrop } from "react-image-crop";
@@ -31,6 +34,9 @@ export default function Profile() {
 
   const [compressedPfp, setCompressedPfp] = useState(null);
   const [compressedBG, setCompressedBG] = useState(null);
+
+  const [uploadError, setUploadError] = useState('');
+  const [isPetUploading, setIsPetUploading] = useState(false);
 
   useEffect(() => {
     if (compressedPfp || compressedBG) {
@@ -67,32 +73,30 @@ export default function Profile() {
   }
 
   async function Profile_Api() {
+    setUploadError('');
     try {
       const formData = new FormData();
       if (compressedPfp) formData.append("profile_img", compressedPfp);
       if (compressedBG) formData.append("background_img", compressedBG);
 
-      const Profile_fetch = await fetch("http://localhost:8080/Api/Upload", {
+      const Profile_fetch = await fetch(`${API}/Api/Upload`, {
         method: "POST",
         credentials: "include",
         body: formData,
       });
 
-      const response = await Profile_fetch.json();
+      if (!Profile_fetch.ok) {
+        const errData = await Profile_fetch.json().catch(() => ({}));
+        throw new Error(errData.error || errData.message || `Upload failed (${Profile_fetch.status})`);
+      }
 
-      localStorage.setItem(
-        "images",
-        JSON.stringify({
-          profilePic: response.ProfilePic,
-          backgroundPic: response.BackgroundPic,
-        })
-      );
+      const response = await Profile_fetch.json();
 
       setfinalCroppedBgImage(response.BackgroundPic);
       setfinalCroppedPfpImage(response.ProfilePic);
     } catch (error) {
       console.error(error);
-      console.log("An error has occured while sending the profile");
+      setUploadError('Failed to upload image. Please try again.');
     }
   }
 
@@ -124,7 +128,7 @@ export default function Profile() {
       if (BioText === "") {
         console.log("need to input something");
       } else {
-        await fetch("http://localhost:8080/Profile/Bio", {
+        await fetch(`${API}/Profile/Bio`, {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -141,7 +145,7 @@ export default function Profile() {
 
   async function GetBio() {
     try {
-      const BioRequest = await fetch("http://localhost:8080/Profile/GetBio", {
+      const BioRequest = await fetch(`${API}/Profile/GetBio`, {
         method: "GET",
         credentials: "include",
       });
@@ -165,37 +169,47 @@ export default function Profile() {
 
   function HandlePet_image_upload(e) {
     const file = e.target.files[0];
-    if (file) {
-      setPetImage(file);
+    if (!file) return;
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setUploadError(`"${file.name}" is not a supported image type.`);
+      return;
     }
+    setUploadError('');
+    setPetImage(file);
   }
 
   async function HandlePetCard() {
+    if (!petImage) return;
+    setIsPetUploading(true);
+    setUploadError('');
     try {
-      if (!petImage) return;
-
       const formdata = new FormData();
       formdata.append("PetImage", petImage);
 
-      await fetch("http://localhost:8080/Pet/Card", {
+      const res = await fetch(`${API}/Pet/Card`, {
         method: "POST",
         body: formdata,
         credentials: "include",
       });
 
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Upload failed (${res.status})`);
+      }
+
       setModified((prev) => !prev);
     } catch (error) {
       console.error(error);
+      setUploadError('Failed to upload pet image. Please try again.');
+    } finally {
+      setIsPetUploading(false);
     }
   }
-
-  useEffect(() => {
-    HandlePetCard();
-  }, [petImage]);
+  // Auto-submit removed — pet image is now saved via an explicit button.
 
   async function GetPetImage() {
     try {
-      const PetImage = await fetch("http://localhost:8080/Profile/Pet", {
+      const PetImage = await fetch(`${API}/Profile/Pet`, {
         method: "GET",
         credentials: "include",
       });
@@ -204,7 +218,6 @@ export default function Profile() {
 
       if (response.PetImgUrl) {
         setUploadedPet(response.PetImgUrl);
-        localStorage.setItem("petImage", JSON.stringify(response.PetImgUrl));
       }
     } catch (error) {
       console.error(error);
@@ -307,7 +320,7 @@ export default function Profile() {
       if (Object.values(formData).some((value) => value === "")) {
         setFormError("One of the fields is Missing");
       } else {
-        await fetch("http://localhost:8080/Api/pet/form", {
+        await fetch(`${API}/Api/pet/form`, {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -327,7 +340,7 @@ export default function Profile() {
 
   async function GetPetForm() {
     try {
-      const response = await fetch("http://localhost:8080/Api/pet/Getform", {
+      const response = await fetch(`${API}/Api/pet/Getform`, {
         method: "GET",
         credentials: "include",
       });
@@ -461,11 +474,13 @@ export default function Profile() {
                   />
                 )}
 
-                <FontAwesomeIcon
-                  icon={faPen}
+                <button
                   className="ModifyPfp"
+                  aria-label="Edit profile picture"
                   onClick={() => setModalState(true)}
-                />
+                >
+                  <FontAwesomeIcon icon={faPen} />
+                </button>
               </div>
             </div>
           </section>
@@ -604,10 +619,21 @@ export default function Profile() {
                     <label
                       htmlFor="pet_image"
                       className="pet_image_upload"
-                      style={UploadedPetdetails && { display: "none" }}
+                      style={UploadedPetdetails ? { display: "none" } : {}}
                     >
                       <FontAwesomeIcon icon={faPlus} />
                     </label>
+
+                    {/* Explicit save button — replaces the auto-submit useEffect */}
+                    {petImage && (
+                      <button
+                        className="save_pet_img_btn"
+                        onClick={HandlePetCard}
+                        disabled={isPetUploading}
+                      >
+                        {isPetUploading ? 'Saving...' : 'Save Pet Image'}
+                      </button>
+                    )}
                   </div>
 
                   {UploadedPetdetails && (
@@ -615,6 +641,8 @@ export default function Profile() {
                       <FontAwesomeIcon icon={faImage} />
                     </label>
                   )}
+
+                  {uploadError && <div className="upload_error">{uploadError}</div>}
                 </div>
               </div>
             </div>

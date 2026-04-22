@@ -1,111 +1,116 @@
-import { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEye,
-  faEyeSlash,
-  faCircleCheck,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 
 import "./SignIn.css";
 import { useAuthenticate } from "./AuthenticateContext.jsx";
+
+/* Reusable paw-print SVG */
+function PawSVG({ className, style }) {
+  return (
+    <svg className={className} style={style} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50"  cy="68" rx="24" ry="20" />
+      <ellipse cx="23"  cy="45" rx="11" ry="9"  transform="rotate(-20 23 45)" />
+      <ellipse cx="39"  cy="34" rx="11" ry="9"  transform="rotate(-8  39 34)" />
+      <ellipse cx="61"  cy="34" rx="11" ry="9"  transform="rotate(8   61 34)" />
+      <ellipse cx="77"  cy="45" rx="11" ry="9"  transform="rotate(20  77 45)" />
+    </svg>
+  );
+}
 
 export default function Login() {
   const {
     Submit,
     showPass,
     Password,
-    SetPassword,
+    setPassword,
     error,
     emailAddress,
     setEmail,
     success,
     isLoading,
     showPassword,
-    UserId,
   } = useAuthenticate();
 
-  useEffect(() => {
-    if (UserId) {
-      localStorage.setItem("UserId", UserId);
-      console.log(UserId);
-    } else {
-      localStorage.removeItem("UserId");
-    }
-  }, [UserId]);
-
-  useEffect(() => {
-    document.body.style.backgroundImage =
-      "url('../Icons_Images/Scene-24.jpg')";
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundRepeat = "no-repeat";
-    document.body.style.backgroundPosition = "center";
-    document.body.style.minHeight = "100vh";
-    document.body.style.margin = "0";
-
-    return () => {
-      document.body.style.backgroundImage = "";
-      document.body.style.backgroundSize = "";
-      document.body.style.backgroundRepeat = "";
-      document.body.style.backgroundPosition = "";
-      document.body.style.minHeight = "";
-      document.body.style.margin = "";
-    };
-  }, []);
-
   return (
-    <>
-      {success ? (
-        <div className="Success">
-          Success <FontAwesomeIcon icon={faCircleCheck} />
-          <a href="/" rel="noopener noreferrer">
-            Back to the main Page
-          </a>
+    <div className="auth-page">
+
+      {/* ── Left panel ── */}
+      <div className="auth-panel-left">
+        <PawSVG className="auth-paw" />
+        <PawSVG className="auth-paw" />
+        <PawSVG className="auth-paw" />
+        <PawSVG className="auth-paw" />
+        <PawSVG className="auth-paw" />
+
+        <div className="auth-brand">
+          <PawSVG className="auth-brand-icon" />
+          <div className="auth-brand-name">Cat Wiki</div>
+          <div className="auth-brand-tagline">A community for animal lovers</div>
         </div>
-      ) : (
-        <>
-          <div className="Title">Log In</div>
+      </div>
 
-          <form className="Form" onSubmit={Submit}>
-            <label>Email Address :</label>
-            <input
-              type="email"
-              onChange={(e) => setEmail(e.target.value)}
-              value={emailAddress}
-            />
+      {/* ── Right panel ── */}
+      <div className="auth-panel-right">
+        <div className="auth-form-container">
 
-            <label className="Pass_Label">Password :</label>
-
-            <div className="password_wrapper">
-              <input
-                type={showPassword ? "text" : "password"}
-                onChange={(e) => SetPassword(e.target.value)}
-                value={Password}
-              />
-
-              <div className="eye_show" onClick={showPass}>
-                {showPassword ? (
-                  <FontAwesomeIcon icon={faEye} />
-                ) : (
-                  <FontAwesomeIcon icon={faEyeSlash} />
-                )}
+          {success ? (
+            <div className="auth-success">
+              <div className="auth-success-check">
+                <FontAwesomeIcon icon={faCircleCheck} />
               </div>
+              <h3>Welcome back!</h3>
+              <p>You&apos;ve logged in successfully.</p>
+              <a href="/">Back to home</a>
             </div>
+          ) : (
+            <>
+              <div className="auth-title">Welcome back</div>
+              <div className="auth-subtitle">
+                Don&apos;t have an account?{" "}
+                <a href="/Sign_Up">Create one</a>
+              </div>
 
-            <button type="submit" className="Submit" disabled={isLoading}>
-              {isLoading ? "Logging In..." : "Log In"}
-            </button>
+              <form className="auth-form" onSubmit={Submit}>
 
-            <div className="LogInLink">
-              Don&apos;t have an account?{" "}
-              <a href="/Sign_Up" rel="noopener noreferrer">
-                Register
-              </a>
-            </div>
+                {/* Email */}
+                <div className="auth-field">
+                  <input
+                    id="login-email"
+                    type="email"
+                    placeholder=" "
+                    value={emailAddress}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <label htmlFor="login-email">Email Address</label>
+                </div>
 
-            <div className="ErrorBox">{error}</div>
-          </form>
-        </>
-      )}
-    </>
+                {/* Password */}
+                <div className="auth-field">
+                  <input
+                    id="login-password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder=" "
+                    value={Password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <label htmlFor="login-password">Password</label>
+                  <span className="auth-field-icon clickable" onClick={showPass}>
+                    <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+                  </span>
+                </div>
+
+                <button type="submit" className="auth-submit" disabled={isLoading}>
+                  {isLoading ? "Logging in…" : "Log In"}
+                </button>
+
+                <div className="auth-error">{error}</div>
+              </form>
+            </>
+          )}
+
+        </div>
+      </div>
+
+    </div>
   );
 }

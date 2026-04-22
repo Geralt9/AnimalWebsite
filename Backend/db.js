@@ -2,7 +2,7 @@ import dotenv from 'dotenv'
 dotenv.config();
 
 import mysql from 'mysql2/promise'
-const sqlKey = process.env.SQLKEY || "Geralt6969////"
+const sqlKey = process.env.SQLKEY;
 
 
 const pool = mysql.createPool({
@@ -10,7 +10,7 @@ const pool = mysql.createPool({
     user:'root',
     database: 'cats_api',
     port: 3306,
-    password: "Geralt6969////",
+    password: sqlKey,
     waitForConnections : true, 
     connectionLimit: 10,
     queueLimit:0

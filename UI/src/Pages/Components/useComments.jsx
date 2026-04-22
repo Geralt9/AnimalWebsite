@@ -1,5 +1,7 @@
 import { useEffect , useState } from "react";
 
+const API = import.meta.env.VITE_API_URL;
+
 
 
 export function useComments (PostId){
@@ -20,7 +22,7 @@ export function useComments (PostId){
           setLoading(true) ;
           setError(null) ;
 
-          const Comments_response = await fetch(`http://localhost:8080/Api/CommentsData/${PostId}` , {
+          const Comments_response = await fetch(`${API}/Api/CommentsData/${PostId}` , {
 
             credentials : 'include' ,
             method : 'GET',
@@ -45,7 +47,7 @@ export function useComments (PostId){
 
       try {
 
-          const Comm_response = await fetch ('http://localhost:8080/Api/Comment' , {
+          const Comm_response = await fetch (`${API}/Api/Comment` , {
             
             method : 'POST',
             credentials : 'include' ,

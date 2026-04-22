@@ -1,10 +1,12 @@
-import { useState, useRef, useContext ,createContext, useEffect, children } from "react";
+import { useState, useRef, useContext, createContext, useEffect, useMemo } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faPen, faXmark,faHeart, faShare, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import {faComment, faImages} from '@fortawesome/free-regular-svg-icons';
 
 import CommentCard from "./Components/CommentCard.jsx";
 
+const API = import.meta.env.VITE_API_URL;
+const POSTS_LIMIT = 10;
 
 const Catcontext = createContext();
 
@@ -13,12 +15,12 @@ const Catcontext = createContext();
 export const InfoContext = ({children})=>{
 
 
-    const [page , Setpage] = useState(1);
-    const [limit, Setlimit] = useState(10);
-  
-    
-    const [breeds , setBreeds] = useState([]); 
-    const [BarState , setBarState] = useState(false); 
+    const [page , setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+
+
+    const [breeds , setBreeds] = useState([]);
+    const [BarState , setBarState] = useState(false);
 
     const[ID,setID]= useState('') ;
     const[Description,setDescription]= useState("") ;
@@ -27,35 +29,33 @@ export const InfoContext = ({children})=>{
     const [Search , setSearch] = useState("") ;
 
 //---------------------------state management for posts------------------------------------
-  const [Posts_content , SetPostContent] = useState([]) ;
-
+  const [Posts_content , setPostContent] = useState([]) ;
+  const [postsPage, setPostsPage] = useState(1);
 
 //-----------------------------------------------------------------------------------------
 
      async function load (){
-   
-      try { 
-  
-        const response = await fetch(`http://localhost:8080/Cats/Images?limit=${limit}&page=${page}`)
-  
+
+      try {
+
+        const response = await fetch(`${API}/Cats/Images?limit=${limit}&page=${page}`)
+
         const received = await response.json();
-        const db_Table = received.data_rows;  
-        
-       // console.log(received.data_rows);
+        const db_Table = received.data_rows;
+
         setBreeds(db_Table);
 
-        Setpage(received.page);
-        Setlimit(received.limit); 
-        
-        
-  
-  
+        setPage(received.page);
+        setLimit(received.limit);
+
+
+
       } catch (error) {
           console.log('error') ;
       }
-  
+
   }
-  
+
 //------------- getting the image id and description -----------
 
   function Getinfo(element){
@@ -64,35 +64,34 @@ export const InfoContext = ({children})=>{
     setID(element.cat_id)
     setCatImage(element.Image_url);
     setBarState(false)
-     
+
   }
-  
+
   const FilteredBreed = breeds.filter( (element)=>element.cat_id.includes(Search.toLowerCase()) );
 
   //--------------------------------Receiving Posts ------------------------------------
 
-    async function GetPosts(){
+  async function GetPosts(page = 1){
       try {
 
-        const response = await fetch('http://localhost:8080/Api/Posts/Feed' , {
+        const response = await fetch(`${API}/Api/Posts/Feed?page=${page}&limit=${POSTS_LIMIT}` , {
           method: 'GET',
           credentials : 'include'
         });
 
-        const Post_Content = await response.json();
-        
-        //const Content = Post_Content.Content.map(element => element.content);
-        //console.log(Post_Content.post_elements);
-        
-        SetPostContent(Post_Content.post_elements);
-        
-
-
-        if(!response.ok){
-
-            console.log('Error, Response not received in /Feed')
-
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.error || errData.message || `Request failed (${response.status})`);
         }
+
+        const Post_Content = await response.json();
+
+        if (page === 1) {
+          setPostContent(Post_Content.post_elements);
+        } else {
+          setPostContent(prev => [...prev, ...Post_Content.post_elements]);
+        }
+        setPostsPage(page);
 
       } catch (error) {
 
@@ -107,10 +106,9 @@ export const InfoContext = ({children})=>{
 
   const[PostDetails , setpostDetails] = useState();
   const[ImagesInter , setimagesInter] = useState([]) ;
- 
 
 
-// optional helper for safety
+// helper: parse comma-separated image string safely
 const parseImages = (images) =>
   (images || "")
     .split(",")
@@ -120,7 +118,6 @@ const parseImages = (images) =>
 const controllerRef = useRef(null);
 
 async function loadPost(id, { openInteract = false, openComments = false } = {}) {
-  // abort any previous request
   if (controllerRef.current) controllerRef.current.abort();
   const controller = new AbortController();
   controllerRef.current = controller;
@@ -129,16 +126,19 @@ async function loadPost(id, { openInteract = false, openComments = false } = {})
   if (openComments) setCommentPop(true);
 
   setPostId(id);
-  setimagesInter([]); // clear previous images
+  setimagesInter([]);
 
   try {
-    const res = await fetch(`http://localhost:8080/Api/Posts/Post_data/${id}`, {
+    const res = await fetch(`${API}/Api/Posts/Post_data/${id}`, {
       method: "GET",
       credentials: "include",
       signal: controller.signal,
     });
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || `HTTP ${res.status}`);
+    }
 
     const data = await res.json();
     setpostDetails(data);
@@ -152,38 +152,42 @@ async function loadPost(id, { openInteract = false, openComments = false } = {})
   }
 }
 
-// new simpler handlers
-const HandlePostInteract = (id) => loadPost(id, { openInteract: true }); 
-const ManageComments = (id) => loadPost(id, { openComments: true }); 
+const HandlePostInteract = (id) => loadPost(id, { openInteract: true });
+const ManageComments = (id) => loadPost(id, { openComments: true });
 
 
 
  //-------------------------------------Manage Liking a Post-----------------------------------------------
 
-
- const [likedPosts, setLikedPosts] = useState({});  
+ const [likedPosts, setLikedPosts] = useState({});
+ const pendingLikes = useRef(new Set());
 
   async function ManageLikedPosts(Post_id) {
-
+        if (pendingLikes.current.has(Post_id)) return;
+        pendingLikes.current.add(Post_id);
         try {
 
-                const Likes_Response = await fetch( `http://localhost:8080/Api/Posts/Post_data/Likes/${Post_id}` ,{
+                const Likes_Response = await fetch( `${API}/Api/Posts/Post_data/Likes/${Post_id}` ,{
                         method : 'POST',
                         credentials : 'include'
                 });
 
+                if (!Likes_Response.ok) {
+                  const errData = await Likes_Response.json().catch(() => ({}));
+                  throw new Error(errData.error || `HTTP ${Likes_Response.status}`);
+                }
+
                 const Response = await Likes_Response.json() ;
-             //  console.log(Response.LikeStatus) ;   //Response.Likes[0]
-                
+
                         setLikedPosts(prev => ({
                                 ...prev,
-                        [Post_id]: Response.LikeStatus // update only this post
+                        [Post_id]: Response.LikeStatus
                         }));
-
-              
 
         } catch (error) {
                 console.error(error) ;
+        } finally {
+          pendingLikes.current.delete(Post_id);
         }
   }
   //---------------------Get Likes Status---------------------------------------------
@@ -191,14 +195,18 @@ const ManageComments = (id) => loadPost(id, { openComments: true });
   async function GetLikeData() {
 
         try {
-                const response = await fetch('http://localhost:8080/Api/Posts/Post_data/LikesData' , {
-                        
+                const response = await fetch(`${API}/Api/Posts/Post_data/LikesData` , {
+
                         method : 'GET',
                         credentials : 'include',
                 })
 
+                if (!response.ok) {
+                  const errData = await response.json().catch(() => ({}));
+                  throw new Error(errData.error || `HTTP ${response.status}`);
+                }
+
                 const LikesResponse = await response.json();
-               // console.log(LikesResponse) ;
 
                       const likedMap = {};
       LikesResponse.LikesId.forEach(id => {
@@ -220,26 +228,29 @@ const [Comment_pop , setCommentPop] = useState(false) ;
 //------------------------------------Managing Comment likes----------
 
   const [commentLikes, setCommentLikes] = useState({});
-
+  const pendingCommentLikes = useRef(new Set());
 
 
     async function HandleLikeComment(commentId , UserId) {
-
+    if (pendingCommentLikes.current.has(commentId)) return;
+    pendingCommentLikes.current.add(commentId);
     try {
-      
+
       await LikeComment({userId : UserId , commentId : commentId}) ;
 
     } catch (error) {
       console.error(error)
+    } finally {
+      pendingCommentLikes.current.delete(commentId);
     }
 
   }
-  
+
   async function LikeComment({userId , commentId}){
-      
+
       try {
 
-        const Like_response = await fetch(`http://localhost:8080/Api/Comments/Likes` , {
+        const Like_response = await fetch(`${API}/Api/Comments/Likes` , {
 
             method : 'POST',
             credentials : 'include',
@@ -252,12 +263,16 @@ const [Comment_pop , setCommentPop] = useState(false) ;
 
         })
 
+        if (!Like_response.ok) {
+          const errData = await Like_response.json().catch(() => ({}));
+          throw new Error(errData.error || `HTTP ${Like_response.status}`);
+        }
+
         const response = await Like_response.json() ;
 
         setCommentLikes( prev =>({
-            ...prev, [commentId] : response.Liked 
+            ...prev, [commentId] : response.Liked
         }))
-       
 
         GetCommentsLikes() ;
 
@@ -267,16 +282,18 @@ const [Comment_pop , setCommentPop] = useState(false) ;
 
     }
 
-      async function GetCommentsLikes (){ //{userId , commentId}
+      async function GetCommentsLikes (){
 
         try {
-          
-          const GetCommentsLikes = await fetch(`http://localhost:8080/Api/Comments/Likes/data/${PostId}` ,{
+
+          const GetCommentsLikesRes = await fetch(`${API}/Api/Comments/Likes/data/${PostId}` ,{
             method : 'GET' ,
             credentials : 'include',
           })
 
-          const CommentLikesResponse = await GetCommentsLikes.json() ;
+          if (!GetCommentsLikesRes.ok) return;
+
+          const CommentLikesResponse = await GetCommentsLikesRes.json() ;
 
            const map = {};
            CommentLikesResponse.likedCommentIds.forEach(id =>{
@@ -284,8 +301,6 @@ const [Comment_pop , setCommentPop] = useState(false) ;
            })
 
            setCommentLikes(map)
-
-          //console.log(map)
 
         } catch (error) {
           console.error(error) ;
@@ -296,11 +311,22 @@ const [Comment_pop , setCommentPop] = useState(false) ;
 
   //----------------------------------------------------------------------------------------------
 
+  const contextValue = useMemo(() => ({
+    page, setPage, limit, setLimit, breeds, setBreeds,
+    BarState, setBarState, Search, setSearch, load, FilteredBreed, Getinfo,
+    Description, setDescription, ID, setID, Catimage, setCatImage,
+    GetPosts, Posts_content, setPostContent, postsPage,
+    likedPosts, setLikedPosts, ManageLikedPosts, GetLikeData,
+    PostDetails, setpostDetails, ImagesInter, setimagesInter,
+    HandlePostInteract, Postinteract, setPostinteract,
+    ManageComments, Comment_pop, setCommentPop,
+    LikeComment, GetCommentsLikes, commentLikes, setCommentLikes, HandleLikeComment,
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), [page, limit, breeds, BarState, Search, FilteredBreed,
+       Posts_content, postsPage, likedPosts, commentLikes,
+       Postinteract, Comment_pop, PostDetails, ImagesInter]);
 
-    return ( <Catcontext.Provider value={{page , Setpage,limit, Setlimit, breeds ,
-         setBreeds,BarState , setBarState,Search , setSearch, load,FilteredBreed,Getinfo ,Description,setDescription,ID,setID,Catimage, setCatImage,GetPosts, Posts_content , SetPostContent,
-         /*PostCard,*/ likedPosts, setLikedPosts, ManageLikedPosts,GetLikeData, PostDetails , setpostDetails, ImagesInter , setimagesInter, HandlePostInteract, Postinteract , setPostinteract,  ManageComments,
-        Comment_pop , setCommentPop, LikeComment , GetCommentsLikes, commentLikes, setCommentLikes, HandleLikeComment }} > {children} </Catcontext.Provider> )
+    return ( <Catcontext.Provider value={contextValue}> {children} </Catcontext.Provider> )
 
 }
 

@@ -39,23 +39,14 @@ export function CommentNode({
 
       <div className="reply_Like">
         <div
-          className={`Like_Comment ${
-            commentLikes[comment.Comment_id] ? "Liked" : ""
-          }`}
-          onClick={() =>
-            HandleLikeComment(comment.Comment_id, comment.user_id)
-          }
-        >   <FontAwesomeIcon
-                                               icon={faHeart}
-                                               className={commentLikes[comment.Comment_id] ? "Liked" : "Unliked"}
-                />
+          className={`Like_Comment ${commentLikes[comment.Comment_id] ? "Liked" : ""}`}
+          onClick={() => HandleLikeComment(comment.Comment_id, comment.user_id)}
+        >
+          <FontAwesomeIcon icon={faHeart} />
           Like
         </div>
 
-        <div
-          className="Reply_comment"
-          onClick={() => setReplyto(comment.Comment_id)}
-        >
+        <div className="Reply_comment" onClick={() => setReplyto(comment.Comment_id)}>
           Reply
         </div>
       </div>
