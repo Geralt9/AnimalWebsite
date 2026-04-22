@@ -7,7 +7,7 @@ import 'dotenv/config';
 
 import { Hash, randomBytes } from 'crypto';
 
-import { GetProfile , GetCats } from './Controllers/GetController.js';
+import { GetProfile , GetCats, GetAnimals } from './Controllers/GetController.js';
 import { LogIn, SignUp, RefreshTokenGeneration } from './Controllers/PostController.js';
 import {Logout} from './Controllers/Deletecontroller.js';
 import { verifyToken } from './Middleware/AuthenticateToken.js';
@@ -26,16 +26,16 @@ const port = process.env.PORT || 8080
 
 const App = express();
 App.use(cookieParser());
-// App.use(cors());
 
 const corsOptions = {
-    origin: 'http://localhost:5173', // Your frontend origin
-    credentials: true, // Allow cookies
-    allowedHeaders: ['Content-Type', 'Authorization']
-  };
-  
+    origin: process.env.ALLOWED_ORIGIN || 'http://localhost:5173',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
 
-
+// Handle CORS preflight requests for all routes
+App.options('*', cors(corsOptions));
 App.use(cors(corsOptions));
 
 App.use (express.json());
@@ -47,9 +47,10 @@ App.use(express.urlencoded({ extended: true, limit: '100mb' }));
 
 
 App.get('/Cats/Images' , GetCats);
+App.get('/Animals' , GetAnimals ) ;
 
 //----------------------------authenticate the user using bcrypt to check for password and email && storing credentials in DB--------------------------------
-
+ 
 
 App.post('/User/SignUp' , SignUp)
 
@@ -65,15 +66,12 @@ App.post('/refresh' , RefreshTokenGeneration)
 
 App.get('/User/Profile' , verifyToken , GetProfile );
 
-App.use('/Api/Posts', router);
-App.use('/Api', router);
-App.use('/' , router);
- 
+// Single mount — all routes in Posts.js use their full absolute paths
+App.use('/', router);
 
 //----------------------------------------------Profile details routes------------------------------------------------------------------------------
 
-
-App.use('/' , router2); 
+App.use('/', router2);
 
 App.listen(port , ()=>{console.log(`server running on port ${port}`)})
 

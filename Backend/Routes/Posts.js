@@ -9,11 +9,11 @@ import upload from './multer.js';
 
 //---------Create posts---------------//
 
-router.post('/' , verifyToken , upload.array('images' ,4 ),  async (req, res)=>{
+router.post('/Api/Posts' , verifyToken , upload.array('images' ,4 ),  async (req, res)=>{
 
     
     const connection = await pool.getConnection();
-      const UserID  = req.body.User;
+      const UserID  = req.user.id;
       const Content = req.body.Post_Content;
       const images = req.files ; 
 
@@ -76,16 +76,18 @@ router.post('/' , verifyToken , upload.array('images' ,4 ),  async (req, res)=>{
 //---------Get posts---------------//
 
 
-router.get('/Feed' , verifyToken , async (req, res)=>{
+router.get('/Api/Posts/Feed' , verifyToken , async (req, res)=>{
 
-   
+    const page  = Math.max(1, parseInt(req.query.page)  || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 10));
+    const offset = (page - 1) * limit;
+
     const connection = await pool.getConnection();
 
     try {
 
-      //const [Posts_Content] = await connection.query(`SELECT content FROM posts `);
       const [results] = await connection.query(`
-   SELECT 
+   SELECT
     posts.id AS post_id,
     posts.content,
     posts.created_at AS post_created_at,
@@ -104,21 +106,21 @@ router.get('/Feed' , verifyToken , async (req, res)=>{
 
   GROUP BY posts.id
   ORDER BY posts.created_at DESC
-`);
+  LIMIT ? OFFSET ?
+`, [limit, offset]);
 
-
-
-      res.status(200).json({  //'Post' : Posts.UserID , 
-           post_elements : results
-
-      })  
+      res.status(200).json({
+           post_elements : results,
+           page,
+           limit,
+      });
 
     } catch (error) {
 
         console.error('Error :' , error )
-        res.status(500).json({ Error : 'An internal server Error has occured creating a Post'});
+        res.status(500).json({ error : 'An internal server error has occured fetching posts'});
 
-    } finally{ 
+    } finally{
         if(connection){connection.release()}
     }
 
@@ -343,11 +345,12 @@ await connection.query(
     
     const connection = await pool.getConnection() ;
 
-const { UserId, PostId, Content, parent_comment_id } = req.body;
+const { PostId, Content, parent_comment_id } = req.body;
+const UserId = req.user.id;
 
       try {
 
-       const [comments] = await connection.query( 'INSERT INTO `comments` ( post_id , user_id , content , created_at , parent_comment_id) values ( ?, ?, ?, ?, ?) ' 
+       const [comments] = await connection.query( 'INSERT INTO `comments` ( post_id , user_id , content , created_at , parent_comment_id) values ( ?, ?, ?, ?, ?) '
         , [ PostId, UserId, Content, new Date(), parent_comment_id || null]) ;
 
         res.status(200).json({comments}) ;     

@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client'
 import {createBrowserRouter , RouterProvider} from 'react-router-dom'
 
 import {InfoContext} from './Pages/CatsContext.jsx'
-import {Slide_context} from './Sliding.jsx'
 import {User_login} from './Pages/AuthenticateContext.jsx'
 
 
@@ -49,11 +48,9 @@ createRoot(document.getElementById('root')).render(
 
     
     <InfoContext>
-    <Slide_context>
     <User_login>
     <RouterProvider router ={router} basename = '/Home' />
     </User_login>
-    </Slide_context>
     </InfoContext>
     
 

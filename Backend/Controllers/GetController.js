@@ -19,7 +19,7 @@ const api_key = process.env.API_KEY ;
        
     const data = await response.json();
 
-    if(!isNaN(limit) && limit >0 && !isNaN(page) && page> 0 ){
+ if(!isNaN(limit) && limit >0 && !isNaN(page) && page> 0 ){
 
        
         const Images = data.map((image)=>  image.url );   
@@ -37,14 +37,8 @@ const api_key = process.env.API_KEY ;
         description[i],
         images[i]
        ])
-        
-         
 
         //-------------------------------------Store the fetched data in the db tables-------------------------------------
-
-        //  const sql = 'INSERT IGNORE INTO `cat_data` (`cat_id` , `description` , `Image_url`) VALUES ?' ;
-       
-        // const [rows, fields] = await pool.query(sql , [InsertElements])
 
         
         const table_elements = 'SELECT * FROM `cat_data` '
@@ -75,6 +69,33 @@ const api_key = process.env.API_KEY ;
  
 }
 
+    //-----------------------------Animals endpoint ---------------------------------------------------------------------------
+
+    export const GetAnimals = async(req, res)=>{
+
+try {
+        const animalName = req.query.name ;
+
+            const response = await fetch (`https://api.api-ninjas.com/v1/animals?name=${animalName}` , 
+                {headers : {'X-Api-Key' : process.env.NINJA_API_KEY}}
+            ) ;
+
+            if (!response.ok) {
+                 return res.status(response.status).json({ error: "Failed to fetch animal data from external API" });
+            }
+
+            const AnimalData = await response.json() ;
+
+    res.status(200).json({AnimalData}) ;   
+
+    
+
+    } catch (error) {
+        console.error('Error fetching animal data:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+     }  
+
+    }
 //-------------------------------------Get Profile ---------------------------------------------------------------------------
 
 export const GetProfile = async(req, res)=>{
@@ -97,8 +118,11 @@ export const GetProfile = async(req, res)=>{
 
 
 
-      res.status(200).json({ ProfilePic : ProfileImages[0].pfp_img ,
-                             BackgroundPic : ProfileImages[0].background_img })
+      res.status(200).json({
+        ProfilePic   : ProfileImages[0].pfp_img,
+        BackgroundPic: ProfileImages[0].background_img,
+        userName     : ProfileImages[0].FullName,
+      });
                              
            /* res.status(200).json({
                 userName : req.user.userName

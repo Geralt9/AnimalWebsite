@@ -97,20 +97,20 @@ export const LogIn =  async (req,res)=>{
             const [rows , fields] = await connection.query('INSERT INTO `refresh_tokens` (`user_id` ,`Token` , `Expiry_time`) VALUES (?,?,?)' ,
                                                    [Checkemail[0].ID, RefreshToken , new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)]) ;
                                                    
+            const isProd = process.env.NODE_ENV === 'production';
+
             res.cookie('AccessToken' , AccessToken, {
                 httpOnly: true,
-                secure : true,
-                maxAge: 15*60*1000,
-                sameSite: 'strict',
-                 domain: 'localhost'
+                secure: isProd,           // false on localhost (HTTP), true in production (HTTPS)
+                maxAge: 15 * 60 * 1000,
+                sameSite: isProd ? 'strict' : 'lax',
             });
 
             res.cookie('RefreshToken' , RefreshToken, {
                 httpOnly: true,
-                secure: true,
-                maxAge:7*24*60*60*1000,
-                sameSite: 'strict',
-                 domain: 'localhost'
+                secure: isProd,
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+                sameSite: isProd ? 'strict' : 'lax',
             })
 
 
@@ -141,14 +141,15 @@ export const LogIn =  async (req,res)=>{
             if(CheckToken.length === 0 ){return res.sendStatus(403)}  
 
             const decoded = jwt.verify(RefreshToken , process.env.REFRESH_TOKEN_SECRET)
-            const newAccessToken = generateAccessToken({userId : decoded.userId})
+            const newAccessToken = generateAccessToken({userId : decoded.userId , userName : decoded.userName})
             
+            const isProd = process.env.NODE_ENV === 'production';
+
             res.cookie('AccessToken' , newAccessToken , {
                 httpOnly: true,
-                secure: true,
+                secure: isProd,
                 maxAge: 15 * 60 * 1000,
-                sameSite: 'strict'
-
+                sameSite: isProd ? 'strict' : 'lax',
             })
 
             res.sendStatus(200) ;
