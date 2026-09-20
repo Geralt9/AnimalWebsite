@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
-import pool from '../db.js';
+
+import prisma from '../prismaClient.js';
+
 import bcrypt from "bcryptjs";
 import { verifyToken } from '../Middleware/AuthenticateToken.js';
 const api_key = process.env.API_KEY ; 
@@ -15,7 +17,7 @@ function generateAccessToken(user){
 
 export const SignUp = async(req, res)=>{
 
-    const connection = await pool.getConnection();
+  //  const connection = await pool.getConnection();
 
   try {
 
@@ -26,12 +28,16 @@ export const SignUp = async(req, res)=>{
      
    
        
-        const [userExists] = await connection.query(
-            `SELECT *FROM users WHERE EmailAddress = ?`,
-            [emailAddress]
-        )
+        //const [userExists] = await connection.query(
+        //   `SELECT *FROM users WHERE EmailAddress = ?`,
+        //    [emailAddress]
+        // )
 
-        if(userExists.length>0){return res.status(409).json({error : 'User already exists'})}
+        const userExists = await prisma.users.findUnique({
+            where : {EmailAddress : emailAddress }
+        })
+
+        if(userExists){return res.status(409).json({error : 'User already exists'})}
    
             //hashing the password
 
@@ -41,9 +47,16 @@ export const SignUp = async(req, res)=>{
         //adding the user to the DB-----
 
     
-        const sql = 'INSERT INTO `users` (`FullName` , `EmailAddress` , `Password`) VALUES (?,?,?)';
+      //  const sql = 'INSERT INTO `users` (`FullName` , `EmailAddress` , `Password`) VALUES (?,?,?)';
+      //  const [user] =await connection.query(sql , [FullName , emailAddress , HashedPassword] ) ;       
 
-        const [user] =await connection.query(sql , [FullName , emailAddress , HashedPassword] ) ;       
+        const user = await prisma.users.create({
+            data : {
+                FullName : FullName,
+                EmailAddress : emailAddress,
+                Password : HashedPassword
+            }
+        })
 
         res.status(201).json({
             success : true,
@@ -57,8 +70,6 @@ export const SignUp = async(req, res)=>{
   } catch (error) {
         console.error("Error :" ,error) ;
         res.status(500).json({error : ' internal server error'}) ;
-  }finally{
-    if (connection) connection.release();
   }
 
 }
@@ -66,8 +77,6 @@ export const SignUp = async(req, res)=>{
 /*------------------------------------------------Log in user Logic--------------------------------------------------------------------*/ 
 
 export const LogIn =  async (req,res)=>{
-
-    const connection = await pool.getConnection();
 
           const emailAddress = req.body.emailAddress;
             const Password = req.body.Password ; 
@@ -77,25 +86,36 @@ export const LogIn =  async (req,res)=>{
 
            // const Payload = {email : emailAddress , Password : Password}
 
-            const [Checkemail] = await connection.query('SELECT *FROM `users` WHERE `EmailAddress` = ?' , [emailAddress])
-            if(Checkemail.length === 0){return res.status(400).json({error : 'Invalid Password or email' })};
+           // const [Checkemail] = await connection.query('SELECT *FROM `users` WHERE `EmailAddress` = ?' , [emailAddress])
+           // if(Checkemail.length === 0){return res.status(400).json({error : 'Invalid Password or email' })};
             
+            const Checkemail = await prisma.users.findUnique({
+                where : {EmailAddress : emailAddress}
+            })
 
+              if(!Checkemail){return res.status(400).json({error : 'Invalid Password or email' })};
          
-            const ValidPass = await bcrypt.compare(Password , Checkemail[0].Password);
+            const ValidPass = await bcrypt.compare(Password , Checkemail.Password);
 
             if(!ValidPass){ return res.status(400).json({error : 'Invalid Password or email'})}
 
           //  res.status(200).json({message : ' user Authenticated successfully!'})
 
-            const userId = {userId : Checkemail[0].ID,
-                            userName : Checkemail[0].FullName } /// Payload
+            const userId = {userId : Checkemail.ID,
+                            userName : Checkemail.FullName } /// Payload
 
             const AccessToken = generateAccessToken(userId);
             const RefreshToken = jwt.sign(userId , process.env.REFRESH_TOKEN_SECRET, {expiresIn : '7d'});
 
-            const [rows , fields] = await connection.query('INSERT INTO `refresh_tokens` (`user_id` ,`Token` , `Expiry_time`) VALUES (?,?,?)' ,
-                                                   [Checkemail[0].ID, RefreshToken , new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)]) ;
+            // const [rows , fields] = await connection.query('INSERT INTO `refresh_tokens` (`user_id` ,`Token` , `Expiry_time`) VALUES (?,?,?)' ,
+            //                                       [Checkemail[0].ID, RefreshToken , new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)]) ;
+            
+                const rows = await prisma.refresh_tokens.create({
+                    data : {user_id : Checkemail.ID,
+                            Token : RefreshToken, 
+                            Expiry_time: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+                    }
+                })                   
                                                    
             const isProd = process.env.NODE_ENV === 'production';
 
@@ -121,8 +141,6 @@ export const LogIn =  async (req,res)=>{
                 console.error('Error:', error );
                 res.status(500).json({error : 'Internal server Error'});
 
-        }finally{
-            if(connection){connection.release()}
         }
     }
 
@@ -132,13 +150,20 @@ export const LogIn =  async (req,res)=>{
  export const RefreshTokenGeneration =   async(req,res)=>{ 
 
             const RefreshToken = req.cookies.RefreshToken;
-            const connection =await pool.getConnection() ;
 
         try {  
 
-            const [CheckToken] = await connection.query('SELECT *FROM `refresh_tokens` WHERE `TOKEN`= ? AND `Expiry_time` > NOW()' ,[RefreshToken] )
-            if(CheckToken[0] == null){return  res.sendStatus(401)}
-            if(CheckToken.length === 0 ){return res.sendStatus(403)}  
+           // const [CheckToken] = await connection.query('SELECT *FROM `refresh_tokens` WHERE `TOKEN`= ? AND `Expiry_time` > NOW()' ,[RefreshToken] )
+            
+            const CheckToken = await prisma.refresh_tokens.findFirst({
+                where : {
+                    Token : RefreshToken,
+                    Expiry_time : {gt : new Date()}
+                }
+            })
+             
+            if(CheckToken == null){return  res.sendStatus(401)}
+            if(!CheckToken ){return res.sendStatus(403)}  
 
             const decoded = jwt.verify(RefreshToken , process.env.REFRESH_TOKEN_SECRET)
             const newAccessToken = generateAccessToken({userId : decoded.userId , userName : decoded.userName})
@@ -157,8 +182,6 @@ export const LogIn =  async (req,res)=>{
         } catch (error) {
             console.error('Error :', error);
             res.status(500).json({error : 'Internal Server error'})
-        }finally{
-            if(connection){connection.release()}
         }
 
     }

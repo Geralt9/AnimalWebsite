@@ -1,6 +1,8 @@
 import express from 'express' ;
 const router = express.Router() ;
-import pool from '../db.js';
+
+import prisma from '../prismaClient.js';
+
 const api_key = process.env.API_KEY ;
 import { verifyToken } from '../Middleware/AuthenticateToken.js';
 
@@ -12,7 +14,6 @@ import upload from './multer.js';
 router.post('/Api/Posts' , verifyToken , upload.array('images' ,4 ),  async (req, res)=>{
 
     
-    const connection = await pool.getConnection();
       const UserID  = req.user.id;
       const Content = req.body.Post_Content;
       const images = req.files ; 
@@ -22,11 +23,17 @@ router.post('/Api/Posts' , verifyToken , upload.array('images' ,4 ),  async (req
     try {
 
 
-     const postResult = await connection.query('INSERT INTO `posts` (user_id , content , created_at) VALUES(?,?,?)' ,
-                            [UserID , Content,  new Date(Date.now())]
-      ); 
+ //    const postResult = await connection.query('INSERT INTO `posts` (user_id , content , created_at) VALUES(?,?,?)' ,
+ //                          [UserID , Content,  new Date(Date.now())]
+ //     ); 
 
-      const postID = postResult[0].insertId;
+      const postResult = await prisma.posts.create({
+        data : {user_id: UserID , content : Content , created_at : new Date(Date.now())}
+      })
+
+      
+
+      const postID = postResult.id;
 
       if(!images || images.length === 0){  return res.status(400).json({error : 'No images were uploaded' }) }
 
@@ -51,14 +58,17 @@ router.post('/Api/Posts' , verifyToken , upload.array('images' ,4 ),  async (req
       })
        uploads.push(result.secure_url) ;
 
-             await connection.query(
-        'INSERT INTO `post_pics` (user_id, post_id, img_url, created_at) VALUES (?, ?, ?, ?)',
-        [UserID, postID, result.secure_url, new Date()]
-      );
+    //        await connection.query(
+    //    'INSERT INTO `post_pics` (user_id, post_id, img_url, created_at) VALUES (?, ?, ?, ?)',
+    //    [UserID, postID, result.secure_url, new Date()]
+    //  );
+
+        await prisma.post_pics.create({
+          data : {post_id : postID , img_url : result.secure_url }
+        })
 
 }
 
-  
 
       res.status(200).json({ postID }); 
 
@@ -67,9 +77,7 @@ router.post('/Api/Posts' , verifyToken , upload.array('images' ,4 ),  async (req
         console.error('Error :' , error )
         res.status(500).json({ Error : 'An internal server Error has occured creating a Post'});
 
-    } finally{ 
-        if(connection){connection.release()}
-    }
+    } 
 
 });
 
@@ -82,32 +90,34 @@ router.get('/Api/Posts/Feed' , verifyToken , async (req, res)=>{
     const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 10));
     const offset = (page - 1) * limit;
 
-    const connection = await pool.getConnection();
+   
 
     try {
 
-      const [results] = await connection.query(`
-   SELECT
-    posts.id AS post_id,
-    posts.content,
-    posts.created_at AS post_created_at,
-
-    users.ID AS user_id,
-    users.FullName,
-    users.EmailAddress,
-    users.pfp_img,
-    users.background_img,
-
-    GROUP_CONCAT(post_pics.img_url) AS images
-
-  FROM posts
-  JOIN users ON posts.user_id = users.ID
-  LEFT JOIN post_pics ON posts.id = post_pics.post_id
-
-  GROUP BY posts.id
-  ORDER BY posts.created_at DESC
-  LIMIT ? OFFSET ?
-`, [limit, offset]);
+const results = await prisma.posts.findMany({
+  select:{
+    id : true,
+    content : true,
+    created_at: true,
+      users: {
+        select : {
+          ID: true,
+          FullName: true ,
+          EmailAddress : true,
+          pfp_img : true,
+          background_img : true ,
+        }
+      },
+      post_pics :{
+        select :{
+          img_url: true
+        }
+      }
+  },
+  orderBy: { created_at: 'desc' },
+  take: limit,
+  skip: offset
+})
 
       res.status(200).json({
            post_elements : results,
@@ -120,9 +130,7 @@ router.get('/Api/Posts/Feed' , verifyToken , async (req, res)=>{
         console.error('Error :' , error )
         res.status(500).json({ error : 'An internal server error has occured fetching posts'});
 
-    } finally{
-        if(connection){connection.release()}
-    }
+    } 
 
 });
 

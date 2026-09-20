@@ -1,13 +1,13 @@
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
-import pool from '../db.js';
+
+import prisma from '../prismaClient.js';
+
 const api_key = process.env.API_KEY ;
 
 
 export const Logout = async(req, res)=>{
 
-          
-          const connection = await pool.getConnection();
 
            
           try {
@@ -15,7 +15,11 @@ export const Logout = async(req, res)=>{
             const RefreshToken =  req.cookies.RefreshToken;
             if(!RefreshToken){return res.sendStatus(204)}
 
-            const[result] = await connection.query( 'DELETE FROM `refresh_tokens` where `Token` = ?' , [RefreshToken]);
+            
+            const result = await prisma.refresh_tokens.delete({
+              where: {Token: RefreshToken}
+            })              
+
 
             const isProd = process.env.NODE_ENV === 'production';
 
@@ -37,10 +41,6 @@ export const Logout = async(req, res)=>{
                  console.error('Error:', error );
                 res.status(500).json({error : 'Internal Logout Server error'});
 
-          }finally{
-            if(connection){
-                 connection.release()
-            }
           }
 
 

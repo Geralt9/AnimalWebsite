@@ -6,11 +6,11 @@ const sqlKey = process.env.SQLKEY;
 
 
 const pool = mysql.createPool({
-    host: 'localhost',
+    host: process.env.DB_HOST || 'localhost',
     user:'root',
     database: 'cats_api',
     port: 3306,
-    password: sqlKey,
+    password: process.env.SQLKEY ,  
     waitForConnections : true, 
     connectionLimit: 10,
     queueLimit:0

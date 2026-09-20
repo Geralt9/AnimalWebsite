@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model animal_habitats {
+  animal_id  Int
+  habitat_id Int
+  animals    animals  @relation(fields: [animal_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "animal_habitats_ibfk_1")
+  habitats   habitats @relation(fields: [habitat_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "animal_habitats_ibfk_2")
+
+  @@id([animal_id, habitat_id])
+  @@index([habitat_id], map: "habitat_id")
+}
+
+model animal_images {
+  id         Int      @id @default(autoincrement())
+  animal_id  Int
+  image_url  String   @db.VarChar(500)
+  alt_text   String?  @db.VarChar(255)
+  is_primary Boolean? @default(false)
+  animals    animals  @relation(fields: [animal_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "animal_images_ibfk_1")
+
+  @@index([animal_id], map: "animal_id")
+}
+
+model animals {
+  id                 Int               @id @default(autoincrement())
+  name               String            @db.VarChar(255)
+  slug               String?           @unique(map: "slug") @db.VarChar(255)
+  description        String            @db.Text
+  life_span          Int
+  friendliness_level Int?
+  created_at         DateTime?         @default(now()) @db.Timestamp(0)
+  updated_at         DateTime?         @default(now()) @db.Timestamp(0)
+  animal_habitats    animal_habitats[]
+  animal_images      animal_images[]
+}
+
+model cat_data {
+  ID          Int     @id @default(autoincrement())
+  cat_id      String  @unique(map: "cat_id") @db.VarChar(255)
+  description String? @db.VarChar(15000)
+  Image_url   String  @db.VarChar(255)
+  users       users[]
+}
+
+model comment_likes {
+  id         Int      @id @default(autoincrement())
+  comment_id Int
+  user_id    Int
+  created_at DateTime @default(now()) @db.DateTime(0)
+  comments   comments @relation(fields: [comment_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "comment_likes_ibfk_1")
+  users      users    @relation(fields: [user_id], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "comment_likes_ibfk_2")
+
+  @@unique([comment_id, user_id], map: "uq_comment_likes")
+  @@index([user_id], map: "user_id")
+}
+
+model comments {
+  id                Int             @id @default(autoincrement())
+  post_id           Int
+  user_id           Int
+  content           String          @db.VarChar(500)
+  created_at        DateTime?       @default(now()) @db.Timestamp(0)
+  parent_comment_id Int?
+  comment_likes     comment_likes[]
+  posts             posts           @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "comments_ibfk_1")
+  users             users           @relation(fields: [user_id], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "comments_ibfk_2")
+  comments          comments?       @relation("commentsTocomments", fields: [parent_comment_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_parent_comment")
+  other_comments    comments[]      @relation("commentsTocomments")
+
+  @@index([parent_comment_id], map: "fk_parent_comment")
+  @@index([post_id], map: "post_id")
+  @@index([user_id], map: "user_id")
+}
+
+model habitats {
+  id              Int               @id @default(autoincrement())
+  name            String            @db.VarChar(100)
+  animal_habitats animal_habitats[]
+}
+
+model likes {
+  id         Int       @id @default(autoincrement())
+  post_id    Int
+  user_id    Int
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  posts      posts     @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "likes_ibfk_1")
+  users      users     @relation(fields: [user_id], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "likes_ibfk_2")
+
+  @@unique([post_id, user_id], map: "unique_like")
+  @@index([user_id], map: "user_id")
+}
+
+model pet {
+  pet_ID    Int       @id @default(autoincrement())
+  user_ID   Int
+  name      String?   @db.VarChar(225)
+  age       Int?
+  sex       pet_sex
+  breed     String?   @db.VarChar(255)
+  CreatedAt DateTime? @default(now()) @db.Timestamp(0)
+  users     users     @relation(fields: [user_ID], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "pet_ibfk_1")
+
+  @@index([user_ID], map: "user_ID")
+}
+
+model post_pics {
+  id         Int       @id @default(autoincrement())
+  post_id    Int
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  img_url    String    @db.VarChar(500)
+  posts      posts     @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "post_pics_ibfk_2")
+
+  @@index([post_id], map: "post_id")
+}
+
+model posts {
+  id         Int         @id @default(autoincrement())
+  user_id    Int
+  content    String      @db.Text
+  created_at DateTime?   @default(now()) @db.Timestamp(0)
+  comments   comments[]
+  likes      likes[]
+  post_pics  post_pics[]
+  users      users       @relation(fields: [user_id], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "posts_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+model profile_details {
+  ID         Int       @id @default(autoincrement())
+  Profile_id Int       @unique(map: "Profile_id")
+  Bio        String?   @db.Text
+  Pictures   String?   @db.VarChar(255)
+  updated_at DateTime? @default(now()) @db.Timestamp(0)
+  users      users     @relation(fields: [Profile_id], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "profile_details_ibfk_1")
+}
+
+model refresh_tokens {
+  ID          Int      @id @default(autoincrement())
+  user_id     Int
+  Token       String   @unique(map: "Token") @db.VarChar(255)
+  Expiry_time DateTime @db.DateTime(0)
+  users       users    @relation(fields: [user_id], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "refresh_tokens_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+model taxonomy_classes {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique(map: "name") @db.VarChar(255)
+  description String? @db.Text
+}
+
+model users {
+  ID              Int              @id @default(autoincrement())
+  FullName        String           @db.VarChar(500)
+  EmailAddress    String           @unique(map: "uq_email") @db.VarChar(500)
+  Password        String           @db.VarChar(255)
+  Fav_Cat         String?          @db.VarChar(400)
+  background_img  String?          @db.VarChar(512)
+  pfp_img         String?          @db.VarChar(512)
+  comment_likes   comment_likes[]
+  comments        comments[]
+  likes           likes[]
+  pet             pet[]
+  posts           posts[]
+  profile_details profile_details?
+  refresh_tokens  refresh_tokens[]
+  cat_data        cat_data?        @relation(fields: [Fav_Cat], references: [cat_id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_1")
+
+  @@index([Fav_Cat], map: "Fav_Cat")
+}
+
+enum pet_sex {
+  male
+  female
+}

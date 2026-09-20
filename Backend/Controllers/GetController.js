@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
-import pool from '../db.js';
+
+import prisma from '../prismaClient.js';
+
 const api_key = process.env.API_KEY ;
 
 
@@ -24,7 +26,7 @@ const api_key = process.env.API_KEY ;
        
         const Images = data.map((image)=>  image.url );   
         const img_id = data.map((img_id)=>(img_id.id));
-        const Breed_id = data.map((elem)=>(elem.breeds)).flat();
+        const Breed_id = data.map((elem)=>(elem.breeds)).flat().filter(Boolean);
 
        
 
@@ -41,19 +43,16 @@ const api_key = process.env.API_KEY ;
         //-------------------------------------Store the fetched data in the db tables-------------------------------------
 
         
-        const table_elements = 'SELECT * FROM `cat_data` '
-        const [data_rows] = await pool.query(table_elements)
+      //  const table_elements = 'SELECT * FROM `cat_data` '
+      //  const [data_rows] = await pool.query(table_elements)
+
+        const data_rows = await prisma.cat_data.findMany()
 
         res.status(200).json({
 
             limit,
             page,
             data_rows,   
-           /* image : Images,
-            ID : ID,
-            Description : description,
-            images : images,
-            Breeds : Breed_id, */
             
             
         })
@@ -100,18 +99,21 @@ try {
 
 export const GetProfile = async(req, res)=>{
 
-        const connection = await pool.getConnection();
+       // const connection = await pool.getConnection();
 
         try {
             
               const userId = req.user.id ;
           //const [Username] = await connection.query('SELECT *FROM `users` WHERE `FullName`= ? ' , [req.user.FullName])  for additionnal info
 
-                const [ProfileImages]= await connection.query('SELECT *FROM `users` WHERE `ID`= ? ' , 
-        [userId]
-      )
+              //  const [ProfileImages]= await connection.query('SELECT *FROM `users` WHERE `ID`= ? ' , 
+         // [userId] )
 
-         if (!ProfileImages.length) {
+           const ProfileImages = await prisma.users.findUnique({
+            where : {ID : userId}
+           })         
+                    
+         if (!ProfileImages) {
             return res.status(404).json({ message: 'User not found' });
         }
 
@@ -119,9 +121,9 @@ export const GetProfile = async(req, res)=>{
 
 
       res.status(200).json({
-        ProfilePic   : ProfileImages[0].pfp_img,
-        BackgroundPic: ProfileImages[0].background_img,
-        userName     : ProfileImages[0].FullName,
+        ProfilePic   : ProfileImages.pfp_img,
+        BackgroundPic: ProfileImages.background_img,
+        userName     : ProfileImages.FullName,
       });
                              
            /* res.status(200).json({
@@ -133,8 +135,6 @@ export const GetProfile = async(req, res)=>{
             console.error('Error :', error)
             res.status(500).json({error : 'Internal server Error'})
            
-        }finally{
-            if(connection){connection.release()}
         }
     }
 
