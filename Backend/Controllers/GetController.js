@@ -9,64 +9,26 @@ const api_key = process.env.API_KEY ;
 
     const limit = parseInt(req.query.limit) || 10;
     const page = parseInt(req.query.page)   || 1 ;
-    const ID = req.query.breed_ids  ;
-  
-//&page=${page}
 
-    const response = await fetch (`https://api.thecatapi.com/v1/images/search?limit=${limit}&has_breeds=1&breeds?breed_ids=${ID}&?order=ASC` , 
-
-       { headers: {'x-api-key' : api_key } })
-       
-    const data = await response.json();
-
- if(!isNaN(limit) && limit >0 && !isNaN(page) && page> 0 ){
-
-       
-        const Images = data.map((image)=>  image.url );   
-        const img_id = data.map((img_id)=>(img_id.id));
-        const Breed_id = data.map((elem)=>(elem.breeds)).flat();
-
-       
-
-       const description = Breed_id.map((element)=> element.description); 
-       const images = Breed_id.map((element)=> element.reference_image_id);
-       const ID = Breed_id.map((element)=> element.id); //Cat name | Title
-
-       const InsertElements = ID.map((ID_element , i)=>[
-        ID_element,
-        description[i],
-        images[i]
-       ])
-
-        //-------------------------------------Store the fetched data in the db tables-------------------------------------
-
-        
-        const table_elements = 'SELECT * FROM `cat_data` '
-        const [data_rows] = await pool.query(table_elements)
-
-        res.status(200).json({
-
-            limit,
-            page,
-            data_rows,   
-           /* image : Images,
-            ID : ID,
-            Description : description,
-            images : images,
-            Breeds : Breed_id, */
-            
-            
-        })
-
-        
-
-    }else{
-
-        res.status(400).json({message : `an error has occured`})
-
+    if(isNaN(limit) || limit <= 0 || isNaN(page) || page <= 0){
+        return res.status(400).json({ message: 'Invalid limit or page parameter' });
     }
 
- 
+    try {
+
+        const [data_rows] = await pool.query('SELECT * FROM `cat_data`');
+
+        res.status(200).json({
+            limit,
+            page,
+            data_rows,
+        });
+
+    } catch (error) {
+        console.error('Error fetching cat data:', error);
+        res.status(500).json({ message: 'An internal server error occurred' });
+    }
+
 }
 
     //-----------------------------Animals endpoint ---------------------------------------------------------------------------

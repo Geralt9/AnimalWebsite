@@ -51,8 +51,11 @@ export default function SignIn() {
   }
 
   function HandlePasswordStrength(value) {
-    const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    setPasswordStrength(strongRegex.test(value) ? "Strong" : "Weak");
+    // Requires lower + upper + digit + a special character and 8+ length —
+    // no longer restricted to a small whitelist of special characters, which
+    // was silently marking genuinely strong passwords (e.g. containing "_" or "#") as weak.
+    const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s]).{8,}$/;
+    setPasswordStrength(value ? (strongRegex.test(value) ? "Strong" : "Weak") : "");
   }
 
   function HandlePassword(e) {
@@ -72,6 +75,18 @@ export default function SignIn() {
       setNameStatus(value ? "invalid" : "");
       setFullnamevalidation(false);
     }
+  }
+
+  function ClearName() {
+    setFullname("");
+    setNameStatus("");
+    setFullnamevalidation(false);
+  }
+
+  function ClearEmail() {
+    setEmailAddress("");
+    setEmailStatus("");
+    setEmailvalidation(false);
   }
 
   function HandleEmail(e) {
@@ -197,7 +212,15 @@ export default function SignIn() {
                     </span>
                   )}
                   {nameStatus === "invalid" && (
-                    <span className="auth-field-icon" style={{ color: "#e76f51" }}>
+                    <span
+                      className="auth-field-icon clickable"
+                      style={{ color: "#e76f51" }}
+                      onClick={ClearName}
+                      role="button"
+                      tabIndex={0}
+                      aria-label="Clear full name"
+                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); ClearName(); } }}
+                    >
                       <FontAwesomeIcon icon={faCircleXmark} />
                     </span>
                   )}
@@ -219,7 +242,15 @@ export default function SignIn() {
                     </span>
                   )}
                   {emailStatus === "invalid" && (
-                    <span className="auth-field-icon" style={{ color: "#e76f51" }}>
+                    <span
+                      className="auth-field-icon clickable"
+                      style={{ color: "#e76f51" }}
+                      onClick={ClearEmail}
+                      role="button"
+                      tabIndex={0}
+                      aria-label="Clear email address"
+                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); ClearEmail(); } }}
+                    >
                       <FontAwesomeIcon icon={faCircleXmark} />
                     </span>
                   )}

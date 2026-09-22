@@ -98,19 +98,23 @@ export const LogIn =  async (req,res)=>{
                                                    [Checkemail[0].ID, RefreshToken , new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)]) ;
                                                    
             const isProd = process.env.NODE_ENV === 'production';
+            // COOKIE_CROSS_SITE=true is set when frontend/backend are on different
+            // tunnel domains for a public demo — browsers only send cookies on
+            // cross-site requests when SameSite=None + Secure (HTTPS) is set.
+            const crossSite = process.env.COOKIE_CROSS_SITE === 'true';
 
             res.cookie('AccessToken' , AccessToken, {
                 httpOnly: true,
-                secure: isProd,           // false on localhost (HTTP), true in production (HTTPS)
+                secure: isProd || crossSite,           // false on localhost (HTTP), true in production/tunnel (HTTPS)
                 maxAge: 15 * 60 * 1000,
-                sameSite: isProd ? 'strict' : 'lax',
+                sameSite: crossSite ? 'none' : (isProd ? 'strict' : 'lax'),
             });
 
             res.cookie('RefreshToken' , RefreshToken, {
                 httpOnly: true,
-                secure: isProd,
+                secure: isProd || crossSite,
                 maxAge: 7 * 24 * 60 * 60 * 1000,
-                sameSite: isProd ? 'strict' : 'lax',
+                sameSite: crossSite ? 'none' : (isProd ? 'strict' : 'lax'),
             })
 
 
@@ -144,12 +148,13 @@ export const LogIn =  async (req,res)=>{
             const newAccessToken = generateAccessToken({userId : decoded.userId , userName : decoded.userName})
             
             const isProd = process.env.NODE_ENV === 'production';
+            const crossSite = process.env.COOKIE_CROSS_SITE === 'true';
 
             res.cookie('AccessToken' , newAccessToken , {
                 httpOnly: true,
-                secure: isProd,
+                secure: isProd || crossSite,
                 maxAge: 15 * 60 * 1000,
-                sameSite: isProd ? 'strict' : 'lax',
+                sameSite: crossSite ? 'none' : (isProd ? 'strict' : 'lax'),
             })
 
             res.sendStatus(200) ;

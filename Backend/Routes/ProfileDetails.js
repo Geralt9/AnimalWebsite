@@ -10,6 +10,7 @@ import upload from './multer.js';
 
 const animals_Api_Key = process.env.ANIMALS_API_KEY;
 
+
  //-----------------------------------------------Profile details : bio images etc ..-------------------------------------------------------
 
     router2.post('/Profile/Bio' , verifyToken , async (req, res)=>{
@@ -54,17 +55,20 @@ const animals_Api_Key = process.env.ANIMALS_API_KEY;
         const connection = await pool.getConnection()
         const UserId = req.user.id ;
 
-         const[data_response] = await connection.query(` SELECT Bio, updated_at FROM profile_details WHERE Profile_id = ? ORDER BY updated_at DESC LIMIT 1` ,
-         [UserId])
-    
+        try {
+
+            const [data_response] = await connection.query(
+                `SELECT Bio, updated_at FROM profile_details WHERE Profile_id = ? ORDER BY updated_at DESC LIMIT 1`,
+                [UserId]
+            );
 
             res.status(200).json({ Bio_data : data_response[0] });
 
-        try {
-
         } catch (error) {
             console.error('Error :' , error);
-            res.status().json({Message : 'Error has occured when fetching the user Bio' })
+            res.status(500).json({ Message : 'Error has occured when fetching the user Bio' });
+        } finally {
+            if (connection) { connection.release(); }
         }
     })
     
@@ -74,7 +78,7 @@ const animals_Api_Key = process.env.ANIMALS_API_KEY;
 
         const connection = await pool.getConnection();
         const UserId = req.user.id ;
-        const PetImage = req.file ;
+        const PetImage = req.file ; 
         
 
         try {
@@ -94,13 +98,16 @@ const animals_Api_Key = process.env.ANIMALS_API_KEY;
 
                     stream.end(PetImage.buffer);
                 })
-                const uploadUrl = result.secure_url; 
+                const uploadUrl = result.secure_url;
 
-             const [PetImages] = await connection.query('UPDATE `profile_details` SET `Pictures` = ? WHERE `Profile_id` = ?',
-                [uploadUrl , UserId]
-            ) 
-
-                
+                await connection.query(
+                    `INSERT INTO profile_details (Profile_id, Pictures, updated_at)
+                     VALUES (?, ?, NOW())
+                     ON DUPLICATE KEY UPDATE
+                       Pictures = VALUES(Pictures),
+                       updated_at = NOW()`,
+                    [UserId, uploadUrl]
+                );
             }
 
            res.status(200).json({Message : 'Pet Image Uploaded successfully'})
@@ -126,13 +133,12 @@ const animals_Api_Key = process.env.ANIMALS_API_KEY;
                 [UserId]
             )
             
-            if(UrlUpload[0]){
-             res.status(200).json({PetImgUrl : UrlUpload[0].Pictures});
- }else{return}
+            res.status(200).json({ PetImgUrl: UrlUpload[0]?.Pictures ?? null });
+
         } catch (error) {
             console.error( 'Error :' , error);
-            res.status().json()
-        } finally {if(connection){connection.release()}}
+            res.status(500).json({ Error: 'Error occurred while fetching the Pet image' });
+        } finally { if(connection){ connection.release() } }
 
     })
 
