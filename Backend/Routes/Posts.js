@@ -167,7 +167,6 @@ router.get('/Api/Posts/Feed' , verifyToken , async (req, res)=>{
 
     const connection = await pool.getConnection();
     const UserId = req.user.id;
-    let Liked ;
 
     try {
 
@@ -241,7 +240,7 @@ router.get('/Api/Posts/Feed' , verifyToken , async (req, res)=>{
 
 //--------------------------Profile Upload in Cloudinary -------------------//
 
-router.post('/Upload' ,verifyToken , upload.fields([
+router.post('/Api/Upload' ,verifyToken , upload.fields([
   { name: 'profile_img', maxCount: 1 },
   { name: 'background_img', maxCount: 1 }, 
 ]) , async (req, res)=>{
@@ -261,7 +260,7 @@ router.post('/Upload' ,verifyToken , upload.fields([
            
 
         if(!profileFile && !bgFile){
-            res.status(400).json({error : 'no image was modified'})
+           return   res.status(400).json({error : 'no image was modified'})
         }
 
        if (bgFile) {
@@ -408,12 +407,7 @@ const UserId = req.user.id;
     let Liked ;
     try {
 
-
-        const [LikeComment] = await connection.query( 'SELECT *FROM comment_likes WHERE comment_id = ? AND user_id = ?' , 
-          [commentId , userId ]) ;
-
-
-          const [existing_comment_like] = await connection.query ('SELECT *FROM comment_likes WHERE comment_id = ? AND user_id = ? ' , 
+          const [existing_comment_like] = await connection.query ('SELECT *FROM comment_likes WHERE comment_id = ? AND user_id = ? ' ,
             [commentId , userId]
           )
 

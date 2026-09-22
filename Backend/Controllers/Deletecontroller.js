@@ -18,16 +18,17 @@ export const Logout = async(req, res)=>{
             const[result] = await connection.query( 'DELETE FROM `refresh_tokens` where `Token` = ?' , [RefreshToken]);
 
             const isProd = process.env.NODE_ENV === 'production';
+            const crossSite = process.env.COOKIE_CROSS_SITE === 'true';
 
             res.clearCookie('AccessToken', {
                 httpOnly: true,
-                secure: isProd,
-                sameSite: isProd ? 'strict' : 'lax',
+                secure: isProd || crossSite,
+                sameSite: crossSite ? 'none' : (isProd ? 'strict' : 'lax'),
             });
             res.clearCookie('RefreshToken', {
                 httpOnly: true,
-                secure: isProd,
-                sameSite: isProd ? 'strict' : 'lax',
+                secure: isProd || crossSite,
+                sameSite: crossSite ? 'none' : (isProd ? 'strict' : 'lax'),
             });
 
             res.sendStatus(204)

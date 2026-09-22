@@ -2,9 +2,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPen,
   faX,
-  faImage,
   faCamera,
   faPlus,
+  faPaw,
+  faCircleUser,
+  faMapLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
 import imageCompression from "browser-image-compression";
 
@@ -27,6 +29,7 @@ export default function Profile() {
     setfinalCroppedPfpImage,
     finalCroppedBgImage,
     setfinalCroppedBgImage,
+    UserName,
   } = useAuthenticate();
 
   const [UpdatedProfilePic, setUpdatedPfp] = useState(null);
@@ -143,6 +146,11 @@ export default function Profile() {
     }
   }
 
+  function CancelBioEdit() {
+    setBioText(Bio || "");
+    setProfileBio(false);
+  }
+
   async function GetBio() {
     try {
       const BioRequest = await fetch(`${API}/Profile/GetBio`, {
@@ -151,7 +159,7 @@ export default function Profile() {
       });
 
       const response = await BioRequest.json();
-      const Biodata = response.Bio_data.Bio;
+      const Biodata = response.Bio_data?.Bio;
 
       setBio(Biodata);
     } catch (error) {
@@ -164,8 +172,10 @@ export default function Profile() {
   }, [BioAlert]);
 
   const [petImage, setPetImage] = useState();
+  const [petImagePreview, setPetImagePreview] = useState(null);
   const [UploadedPetdetails, setUploadedPet] = useState();
   const [ModifiedAlert, setModified] = useState(false);
+  const petImageInputRef = useRef(null);
 
   function HandlePet_image_upload(e) {
     const file = e.target.files[0];
@@ -176,6 +186,22 @@ export default function Profile() {
     }
     setUploadError('');
     setPetImage(file);
+  }
+
+  useEffect(() => {
+    if (!petImage) {
+      setPetImagePreview(null);
+      return;
+    }
+    const url = URL.createObjectURL(petImage);
+    setPetImagePreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [petImage]);
+
+  function CancelPetImage() {
+    setPetImage(undefined);
+    setUploadError('');
+    if (petImageInputRef.current) petImageInputRef.current.value = '';
   }
 
   async function HandlePetCard() {
@@ -198,6 +224,8 @@ export default function Profile() {
       }
 
       setModified((prev) => !prev);
+      setPetImage(undefined);
+      if (petImageInputRef.current) petImageInputRef.current.value = '';
     } catch (error) {
       console.error(error);
       setUploadError('Failed to upload pet image. Please try again.');
@@ -205,7 +233,7 @@ export default function Profile() {
       setIsPetUploading(false);
     }
   }
-  // Auto-submit removed — pet image is now saved via an explicit button.
+  // Auto-submit removed — pet image is now saved via an explicit popup.
 
   async function GetPetImage() {
     try {
@@ -232,7 +260,7 @@ export default function Profile() {
     GetPetForm();
     fetchProfile();
 
-    document.body.style.backgroundColor = "#0047AB";
+    document.body.style.backgroundColor = "#fefae0";
     document.body.style.margin = "0";
     document.body.style.minHeight = "100vh";
 
@@ -362,10 +390,11 @@ export default function Profile() {
         />
       )}
 
-      <section className={`BG_CropPopUp ${BGPop ? "Visible" : "Hidden"}`}>
-        <div className={BGPop ? "Container_Crop" : "Container_Crop_Before"} ref={containerRef}>
+      <section className={`bg-crop-overlay ${BGPop ? "bg-crop-overlay--visible" : ""}`}>
+        <div className="bg-crop-panel" ref={containerRef}>
           <button
-            className="closePopUp"
+            className="bg-crop-panel__close"
+            aria-label="Close"
             onClick={() => {
               setBGPop(false);
               setBackgroundPic(null);
@@ -382,12 +411,12 @@ export default function Profile() {
             onChange={(e) => handleImageUpload(e, "Background")}
           />
 
-          <label htmlFor="BG" className={BackgroundPic ? "BG_Uploaded_label" : "Bg_non_uploaded_label"}>
-            Upload Image
+          <label htmlFor="BG" className="bg-crop-upload">
+            {BackgroundPic ? "Choose a different photo" : "Upload cover photo"}
           </label>
 
           {BackgroundPic && (
-            <section className="BG_Crop_element">
+            <section className="bg-crop-stage">
               <ReactCrop
                 crop={Crop}
                 onChange={(pixelCrop, percentCrop) => setCrop(percentCrop)}
@@ -398,7 +427,7 @@ export default function Profile() {
               >
                 <img
                   src={BackgroundPic}
-                  className="BackgroundUpload"
+                  className="bg-crop-stage__img"
                   onLoad={HandleLoadedBG}
                   style={{ display: "block", maxWidth: "100%" }}
                   ref={imgRef}
@@ -406,7 +435,7 @@ export default function Profile() {
               </ReactCrop>
 
               <button
-                className="ApplyCrop"
+                className="bg-crop-apply"
                 onClick={() => {
                   setCanvasPreview(
                     imgRef.current,
@@ -419,63 +448,54 @@ export default function Profile() {
                   setBGPop(false);
                 }}
               >
-                Crop Image
+                Crop &amp; Apply
               </button>
 
               <canvas
-                className="Preview_Box"
+                className="crop-canvas--hidden"
                 ref={previewCanvasRef}
-                style={{
-                  display: "none",
-                  border: "1px solid black",
-                  objectFit: "contain",
-                  width: 150,
-                  height: 150,
-                }}
               />
             </section>
           )}
         </div>
       </section>
 
-      <main className="profile_page">
-        <div className="profile_feed">
-          <section className="profile_header">
-            <div className="Background_Image">
+      <main className="profile-page">
+        <div className="profile-sheet">
+          <section className="profile-cover">
+            <div className="profile-cover__media">
               <FontAwesomeIcon
-                icon={faImage}
-                className={finalCroppedBgImage ? "HiddenBgSilouhette" : "BgSilouhette"}
+                icon={faPaw}
+                className={finalCroppedBgImage ? "profile-cover__paw profile-cover__paw--hidden" : "profile-cover__paw"}
               />
-
-              <button className="AddBG" onClick={handleBGPop}>
-                <FontAwesomeIcon icon={faCamera} />
-              </button>
 
               {finalCroppedBgImage && (
                 <img
                   src={finalCroppedBgImage}
-                  className="BackgroundUpload"
+                  className="profile-cover__img"
                   onLoad={HandleLoadedBG}
-                  style={{ display: "block", maxWidth: "100%" }}
                   ref={imgRef}
+                  alt="Cover"
                 />
               )}
             </div>
 
-            <div className="profile_identity">
-              <div className="Pfp">
+            <button className="profile-cover__edit" onClick={handleBGPop} aria-label="Edit cover photo">
+              <FontAwesomeIcon icon={faCamera} />
+            </button>
+
+            <div className="profile-identity">
+              <div className="profile-avatar">
                 {finalCroppedpfpImage ? (
-                  <img className="Default_Pfp" src={finalCroppedpfpImage} alt="Profile" />
+                  <img className="profile-avatar__img" src={finalCroppedpfpImage} alt="Profile" />
                 ) : (
-                  <img
-                    className="Default_Pfp"
-                    src="https://cdn.vectorstock.com/i/1000v/95/56/user-profile-icon-avatar-or-person-vector-45089556.jpg"
-                    alt="Default profile"
-                  />
+                  <div className="profile-avatar__placeholder">
+                    <FontAwesomeIcon icon={faCircleUser} />
+                  </div>
                 )}
 
                 <button
-                  className="ModifyPfp"
+                  className="profile-avatar__edit"
                   aria-label="Edit profile picture"
                   onClick={() => setModalState(true)}
                 >
@@ -485,100 +505,129 @@ export default function Profile() {
             </div>
           </section>
 
-          <section className="Profile_details1">
-            <div className="Bio card">
-              <div className="Bio_Title">About / Bio</div>
+          <div className="profile-identity__caption">
+            <h1 className="profile-identity__name">{UserName || "Your profile"}</h1>
+            <span className="profile-identity__tag">Pet parent</span>
+          </div>
+
+          <section className="profile-grid">
+            <div className="journal-card journal-card--bio">
+              <div className="journal-card__header">
+                <span className="journal-card__eyebrow">About</span>
+                <h2 className="journal-card__heading">Field Notes</h2>
+              </div>
 
               {ProfileBio ? (
-                <div className="bio_editor">
+                <div className="bio-editor">
                   <textarea
-                    className="Bio_text"
+                    className="bio-editor__textarea"
+                    placeholder="Tell the community about yourself and your pets..."
                     value={BioText}
                     onChange={(e) => setBioText(e.target.value)}
                   />
-                  <button className="Save_bio" onClick={ModifyBio}>
-                    Save
-                  </button>
+                  <div className="bio-editor__actions">
+                    <button className="pf-btn pf-btn--solid" onClick={ModifyBio}>
+                      Save
+                    </button>
+                    <button type="button" className="pf-btn pf-btn--ghost" onClick={CancelBioEdit}>
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               ) : (
-                <div className="Text_Bio_Container">
-                  <div className="bio_content">{Bio}</div>
-                  <button className="Edit_Bio" onClick={() => setProfileBio(true)}>
-                    Edit Bio <FontAwesomeIcon className="Bio_pen" icon={faPen} />
+                <div className="bio-view">
+                  <p className="bio-view__text">
+                    {Bio || "No bio yet — share a little about yourself and the pets you love."}
+                  </p>
+                  <button className="pf-btn pf-btn--ghost" onClick={() => setProfileBio(true)}>
+                    <FontAwesomeIcon icon={faPen} /> Edit bio
                   </button>
                 </div>
               )}
             </div>
 
-            <div className="Pet_details card">
-              <div className="Pet_title">Pet details</div>
+            <div className="journal-card journal-card--pet">
+              <div className="journal-card__header">
+                <span className="journal-card__eyebrow">Pet Passport</span>
+                <h2 className="journal-card__heading">{Pet_Details?.name || "Pet details"}</h2>
+              </div>
 
-              <div className="pet_main">
+              <div className="pet-record">
                 {formState ? (
-                  <form className="Pet_form">
-                    <label>Name :</label>
-                    <input
-                      type="text"
-                      name="Name"
-                      placeholder="Input your pet's name"
-                      value={formData.Name}
-                      onChange={HandleformChange}
-                    />
-
-                    <label>Breed :</label>
-                    <input
-                      type="text"
-                      name="Breed"
-                      placeholder="Enter your pet's breed"
-                      value={formData.Breed}
-                      onChange={HandleformChange}
-                    />
-
-                    <label htmlFor="age">Age (in years) :</label>
-                    <input
-                      type="number"
-                      id="age"
-                      name="Age"
-                      min="0"
-                      max="100"
-                      value={formData.Age}
-                      onChange={HandleformChange}
-                    />
-
-                    <label>Sex :</label>
-
-                    <div className="sex_options">
-                      <label>
-                        <input
-                          type="radio"
-                          name="Sex"
-                          value="male"
-                          checked={formData.Sex === "male"}
-                          onChange={HandleformChange}
-                        />{" "}
-                        Male
-                      </label>
-                      <label>
-                        <input
-                          type="radio"
-                          name="Sex"
-                          value="female"
-                          checked={formData.Sex === "female"}
-                          onChange={HandleformChange}
-                        />{" "}
-                        Female
-                      </label>
+                  <form className="pet-form">
+                    <div className="pet-form__field">
+                      <label htmlFor="pet-name">Name</label>
+                      <input
+                        id="pet-name"
+                        type="text"
+                        name="Name"
+                        placeholder="Your pet's name"
+                        value={formData.Name}
+                        onChange={HandleformChange}
+                      />
                     </div>
 
-                    {formError && <div className="Form_Error">{formError}</div>}
+                    <div className="pet-form__field">
+                      <label htmlFor="pet-breed">Breed</label>
+                      <input
+                        id="pet-breed"
+                        type="text"
+                        name="Breed"
+                        placeholder="Your pet's breed"
+                        value={formData.Breed}
+                        onChange={HandleformChange}
+                      />
+                    </div>
 
-                    <div className="pet_form_actions">
-                      <button className="Submit_Pet_Card" onClick={handleFormSubmit}>
+                    <div className="pet-form__field">
+                      <label htmlFor="pet-age">Age (years)</label>
+                      <input
+                        type="number"
+                        id="pet-age"
+                        name="Age"
+                        min="0"
+                        max="100"
+                        value={formData.Age}
+                        onChange={HandleformChange}
+                      />
+                    </div>
+
+                    <div className="pet-form__field">
+                      <label>Sex</label>
+                      <div className="pet-form__sex">
+                        <label className="pet-form__sex-option">
+                          <input
+                            type="radio"
+                            name="Sex"
+                            value="male"
+                            checked={formData.Sex === "male"}
+                            onChange={HandleformChange}
+                          />
+                          Male
+                        </label>
+                        <label className="pet-form__sex-option">
+                          <input
+                            type="radio"
+                            name="Sex"
+                            value="female"
+                            checked={formData.Sex === "female"}
+                            onChange={HandleformChange}
+                          />
+                          Female
+                        </label>
+                      </div>
+                    </div>
+
+                    {formError && <div className="pet-form__error">{formError}</div>}
+
+                    <div className="pet-form__actions">
+                      <button className="pf-btn pf-btn--solid-invert" onClick={handleFormSubmit}>
                         Save
                       </button>
                       <button
                         type="button"
-                        className="Cancel_Pet_Card"
+                        className="pf-btn pf-btn--icon-invert"
+                        aria-label="Cancel"
                         onClick={() => setFormState(false)}
                       >
                         <FontAwesomeIcon icon={faX} />
@@ -586,68 +635,104 @@ export default function Profile() {
                     </div>
                   </form>
                 ) : (
-                  <div className="form_details">
-                    <div id="Form_title">Form details</div>
+                  <div className="pet-record__details">
+                    <dl className="pet-record__stats">
+                      <div className="pet-record__stat">
+                        <dt>Name</dt>
+                        <dd>{Pet_Details?.name || "—"}</dd>
+                      </div>
+                      <div className="pet-record__stat">
+                        <dt>Breed</dt>
+                        <dd>{Pet_Details?.breed || "—"}</dd>
+                      </div>
+                      <div className="pet-record__stat">
+                        <dt>Age</dt>
+                        <dd>{Pet_Details?.age ?? "—"}</dd>
+                      </div>
+                      <div className="pet-record__stat">
+                        <dt>Sex</dt>
+                        <dd>{Pet_Details?.sex || "—"}</dd>
+                      </div>
+                    </dl>
 
-                    <div id="form_sub_element">Pet Name : {Pet_Details?.name}</div>
-                    <div id="form_sub_element">Age : {Pet_Details?.age}</div>
-                    <div id="form_sub_element">Sex : {Pet_Details?.sex}</div>
-                    <div id="form_sub_element">Breed : {Pet_Details?.breed}</div>
-
-                    <button className="Edit_form_Butt" onClick={() => setFormState(true)}>
-                      Edit Pet details
+                    <button className="pf-btn pf-btn--ghost-invert" onClick={() => setFormState(true)}>
+                      <FontAwesomeIcon icon={faPen} /> Edit pet details
                     </button>
                   </div>
                 )}
 
-                <div className="pet_media_panel">
-                  <div className="pet_image">
+                <div className="pet-record__photo-panel">
+                  <div className="pet-record__photo">
                     {UploadedPetdetails ? (
-                      <img className="pet-image" src={UploadedPetdetails} alt="Pet" />
+                      <img className="pet-record__photo-img" src={UploadedPetdetails} alt="Pet" />
                     ) : (
-                      <img className="animal_silhouette" src="../Icons_Images/Dog.png" alt="Dog silhouette" />
+                      <img className="pet-record__photo-silhouette" src="../Icons_Images/Dog.png" alt="Pet silhouette" />
                     )}
 
                     <input
                       type="file"
                       accept="image/*"
                       id="pet_image"
+                      ref={petImageInputRef}
                       style={{ display: "none" }}
                       onChange={(e) => HandlePet_image_upload(e)}
                     />
 
-                    <label
-                      htmlFor="pet_image"
-                      className="pet_image_upload"
-                      style={UploadedPetdetails ? { display: "none" } : {}}
-                    >
-                      <FontAwesomeIcon icon={faPlus} />
-                    </label>
-
-                    {/* Explicit save button — replaces the auto-submit useEffect */}
-                    {petImage && (
-                      <button
-                        className="save_pet_img_btn"
-                        onClick={HandlePetCard}
-                        disabled={isPetUploading}
-                      >
-                        {isPetUploading ? 'Saving...' : 'Save Pet Image'}
-                      </button>
+                    {UploadedPetdetails ? (
+                      <label htmlFor="pet_image" className="pet-record__photo-edit" aria-label="Change pet photo">
+                        <FontAwesomeIcon icon={faCamera} />
+                      </label>
+                    ) : (
+                      <label htmlFor="pet_image" className="pet-record__photo-add" aria-label="Add pet photo">
+                        <FontAwesomeIcon icon={faPlus} />
+                      </label>
                     )}
                   </div>
 
-                  {UploadedPetdetails && (
-                    <label htmlFor="pet_image" className="pet_image_reupload">
-                      <FontAwesomeIcon icon={faImage} />
-                    </label>
+                  {petImage && (
+                    <div className="pet-photo-popup" role="dialog" aria-label="Save new pet photo">
+                      <div className="pet-photo-popup__preview">
+                        {petImagePreview && <img src={petImagePreview} alt="Selected pet" />}
+                      </div>
+                      <div className="pet-photo-popup__actions">
+                        <button
+                          type="button"
+                          className="pet-photo-popup__save"
+                          onClick={HandlePetCard}
+                          disabled={isPetUploading}
+                        >
+                          {isPetUploading ? "Saving…" : "Save"}
+                        </button>
+                        <button
+                          type="button"
+                          className="pet-photo-popup__cancel"
+                          aria-label="Cancel new pet photo"
+                          onClick={CancelPetImage}
+                          disabled={isPetUploading}
+                        >
+                          <FontAwesomeIcon icon={faX} />
+                        </button>
+                      </div>
+                    </div>
                   )}
 
-                  {uploadError && <div className="upload_error">{uploadError}</div>}
+                  {uploadError && <div className="pet-record__upload-error">{uploadError}</div>}
                 </div>
               </div>
             </div>
 
-            <div className="Routes_box card">Routes</div>
+            <div className="journal-card journal-card--routes">
+              <div className="journal-card__header">
+                <span className="journal-card__eyebrow">Coming soon</span>
+                <h2 className="journal-card__heading">Routes</h2>
+              </div>
+              <div className="routes-card__body">
+                <FontAwesomeIcon icon={faMapLocationDot} className="routes-card__icon" />
+                <p className="routes-card__desc">
+                  Walk logs, feeding schedules, and vet reminders will live here soon.
+                </p>
+              </div>
+            </div>
           </section>
         </div>
       </main>
